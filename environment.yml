@@ -1,0 +1,24 @@
+name: deepml-env
+channels:
+ - defaults
+ - conda-forge
+dependencies:
+ - autopep8
+ - distributed
+ - flake8
+ - isort
+ - jupyterlab
+ - jupyter
+ - mypy
+ - nomkl
+ - pandas
+ - pytest
+ - python
+ - scikit-learn
+ - scipy
+ - tqdm
+ - unidecode
+ - gensim
+ - sphinx
+ - pytorch
+ - torchvision

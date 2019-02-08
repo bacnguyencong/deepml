@@ -1,2 +1,2 @@
-# Deep-metric-learning
-Deep metric learning repository
+# deepml
+A deep metric learning repository
