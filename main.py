@@ -6,7 +6,7 @@ from torchvision import models
 
 # print(models.__dict__)
 
-model = CNNs(out_dim=10, arch='resnet18')
+model = CNNs(out_dim=10, arch='bnincepnet')
 input_shape = (3, 224, 224)
 
 x = torch.rand(1, *input_shape)

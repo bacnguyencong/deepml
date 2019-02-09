@@ -3,6 +3,7 @@ import torch.nn as nn
 import torchvision.models as models
 from .embedding import Embedding
 import torch.nn.functional as F
+from .bninception import bninception
 
 
 class CNNs(nn.Module):
@@ -14,6 +15,8 @@ class CNNs(nn.Module):
                  dropout=None,
                  normalized=True):
         super(CNNs, self).__init__()
+
+        models.bnincepnet = bninception
 
         if pretrained:
             print("=> using pre-trained model '{}'\n".format(arch))
@@ -46,18 +49,25 @@ class CNNs(nn.Module):
                 nn.Dropout(),
                 Embedding(25088, out_dim, dropout, normalized)
             )
+        elif arch.startswith('bnincepnet'):
+            self.features = model
+            self.features.last_linear = Embedding(
+                1024, out_dim, dropout, normalized)
         else:
             raise ("Finetuning not supported on this architecture yet")
 
-        self.modelName = arch
+        self.arch = arch
 
     def forward(self, x):
-        f = self.features(x)
-        if self.modelName.startswith('densenet'):
-            out = F.relu(f, inplace=True)
-            out = F.avg_pool2d(out, kernel_size=7).view(f.size(0), -1)
-            y = self.classifier(out)
+        if self.arch.startswith('bnincepnet'):
+            y = self.features(x)
         else:
-            f = f.view(f.size(0), -1)
-            y = self.classifier(f)
+            f = self.features(x)
+            if self.arch.startswith('densenet'):
+                out = F.relu(f, inplace=True)
+                out = F.avg_pool2d(out, kernel_size=7).view(f.size(0), -1)
+                y = self.classifier(out)
+            else:
+                f = f.view(f.size(0), -1)
+                y = self.classifier(f)
         return y
