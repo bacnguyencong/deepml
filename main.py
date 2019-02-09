@@ -1,3 +1,4 @@
+from deepml import train
 from deepml.model import CNNs
 import torch
 import numpy as np
