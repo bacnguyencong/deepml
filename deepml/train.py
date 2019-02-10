@@ -1,114 +1,170 @@
-from .utils import AverageMeter
-import time
+import argparse
+import random
+
 import torch
-import shutil
+import torch.backends.cudnn as cudnn
+from torch.utils.data import DataLoader
+from torchvision import models, transforms
+
+from deepml import datasets, losses, test, train
+from deepml.models import CNNs
+
+# list of all arquitechtures
+MODEL_NAMES = sorted(
+    name for name in models.__dict__
+    if name.islower() and not name.startswith("__")
+    and callable(models.__dict__[name])
+)
+# list of all losses
+MODEL_LOSSES = sorted(
+    name for name in losses.__dict__
+    if callable(losses.__dict__[name]) and not name.startswith("__")
+)
+# list of all data sets
+MODEL_DATASETS = sorted(
+    name for name in datasets.__dict__
+    if callable(datasets.__dict__[name]) and not name.startswith("__")
+)
+# list of data paths
+DATA_PATHS = {
+    'Cub': '/home/kunkun220189/Documents/Python/deepml/data/cub_200_2011',
+    'Stand': '/home/kunkun220189/Documents/Python/deepml/data/stanford',
+    'Car': '/home/kunkun220189/Documents/Python/deepml/data/cars196'
+}
 
 
-def train(train_loader, model, criterion, optimizer, epoch, args):
-    batch_time = AverageMeter()
-    data_time = AverageMeter()
-    losses = AverageMeter()
-    acces = AverageMeter()
+def main(args):
+    """Perform train
 
-    # switch to train mode
-    model.train()
-    best_acc = 0
+    Args:
+        args ([type]): [description]
+    """
 
-    end = time.time()
-    for i, (input, target) in enumerate(train_loader):
-        # measure data loading time
-        data_time.update(time.time() - end)
+    if args.seed is not None:
+        random.seed(args.seed)
+        torch.manual_seed(args.seed)
+        cudnn.deterministic = True
 
-        if args.gpu is not None:
-            input = input.cuda(args.gpu, non_blocking=True)
-        target = target.cuda(args.gpu, non_blocking=True)
+    # setup GPUs or CPUs
+    num_device = torch.cuda.device_count()
+    device = torch.device('cuda:%d'.format(0 if args.gpu is None else args.gpu)
+                          if num_device > 0 else 'cpu')
 
-        # compute output
-        output = model(input)
-        loss = criterion(output, target)
+    # setup data augmentation
+    normalize = transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+    train_transforms = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(args.img_size),
+        transforms.ToTensor(),
+        normalize
+    ])
+    test_transforms = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(args.img_size),
+        transforms.ToTensor(),
+        normalize
+    ])
 
-        # measure accuracy and record loss
-        acc = accuracy(output, target)
-        losses.update(loss.item(), input.size(0))
-        acces.update(acc, input.size(0))
+    # build model
+    model = CNNs(
+        out_dim=args.outdim,
+        arch=args.arch,
+        pretrained=args.pretrained
+    ).to(device)
 
-        # compute gradient and do SGD step
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+    args.device = device
+    # setup loss function
+    criterion = losses.__dict__[args.loss]()
+    # setup data set
+    data = datasets.__dict__[args.data](DATA_PATHS[args.data])
 
-        # measure elapsed time
-        batch_time.update(time.time() - end)
-        end = time.time()
+    train_loader = DataLoader(
+        data.get_train_loader(train_transforms),
+        batch_size=args.batch_size,
+        shuffle=True,
+        num_workers=args.workers,
+        pin_memory=num_device > 0
+    )
 
-        if i % args.print_freq == 0:
-            print('Epoch: [{0}][{1}/{2}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Acc@ {acc.val:.3f} ({acc.avg:.3f})'.format(
-                      epoch, i, len(train_loader), batch_time=batch_time,
-                      data_time=data_time, loss=losses, acc=acces))
+    valid_loader = DataLoader(
+        data.get_train_loader(test_transforms),
+        batch_size=args.batch_size,
+        shuffle=False,
+        num_workers=args.workers,
+        pin_memory=num_device > 0
+    )
 
-        # update the best parameters
-        save_checkpoint({
-            'epoch': epoch + 1,
-            'arch': args.arch,
-            'state_dict': model.state_dict(),
-            'best_acc': best_acc,
-            'optimizer': optimizer.state_dict(),
-        }, acc > best_acc)
+    test_loader = DataLoader(
+        data.get_test_loader(test_transforms),
+        batch_size=args.batch_size,
+        shuffle=False,
+        num_workers=args.workers,
+        pin_memory=num_device > 0
+    )
 
-        # update best accuracy
-        best_acc = max(best_acc, acc)
+    # setup the optimizer
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
+                                 weight_decay=args.weight_decay)
 
+    # train the model
+    train(train_loader, valid_loader, model, criterion, optimizer, args)
 
-def validate(val_loader, model, criterion, args):
-    batch_time = AverageMeter()
-    losses = AverageMeter()
-    acces = AverageMeter()
-
-    # switch to evaluate mode
-    model.eval()
-
-    with torch.no_grad():
-        end = time.time()
-        for i, (input, target) in enumerate(val_loader):
-            if args.gpu is not None:
-                input = input.cuda(args.gpu, non_blocking=True)
-            target = target.cuda(args.gpu, non_blocking=True)
-
-            # compute output
-            output = model(input)
-            loss = criterion(output, target)
-
-            # measure accuracy and record loss
-            acc = accuracy(output, target)
-            losses.update(loss.item(), input.size(0))
-            acces.update(acc, input.size(0))
-
-            # measure elapsed time
-            batch_time.update(time.time() - end)
-            end = time.time()
-
-            if i % args.print_freq == 0:
-                print('Test: [{0}/{1}]\t'
-                      'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                      'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                      'Acc@1 {acc.val:.3f} ({acc.avg:.3f})'.format(
-                          i, len(val_loader), batch_time=batch_time,
-                          loss=losses, acc=acces))
-
-        print(' * Acc {acc.avg:.3f}'.format(acc=acces))
-
-    return acces.avg
+    # test the model
+    test(test_loader, model, criterion, optimizer, args)
 
 
-def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
-    torch.save(state, filename)
-    if is_best:
-        shutil.copyfile(filename, 'model_best.pth.tar')
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Deep metric learning')
 
+    parser.add_argument('--data', default='Cub', required=True,
+                        help='name of the dataset')
+    parser.add_argument('-a', '--arch', metavar='ARCH', default='bnincepnet',
+                        choices=MODEL_NAMES,
+                        help='model architecture: ' +
+                        ' | '.join(MODEL_NAMES) +
+                        ' (default: bnincepnet)')
+    parser.add_argument('-l', '--loss', metavar='LOSS',
+                        default='ContrastiveLoss',
+                        choices=MODEL_LOSSES,
+                        help='model loss: | '.join(MODEL_LOSSES) +
+                        ' (default: ContrastiveLoss)')
+    parser.add_argument('-img_size', default=227, type=int,
+                        help='image shape (default: 227)')
+    parser.add_argument('-j', '--workers', default=8, type=int, metavar='N',
+                        help='number of data loading workers (default: 4)')
+    parser.add_argument('--epochs', default=90, type=int, metavar='N',
+                        help='number of total epochs to run')
+    parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
+                        help='manual epoch number (useful on restarts)')
+    parser.add_argument('--outdim', default=128, type=int, metavar='N',
+                        help='number of features')
+    parser.add_argument('-b', '--batch-size', default=4, type=int,
+                        metavar='N',
+                        help='mini-batch size (default: 256), this is the'
+                        'total batch size of all GPUs on the current node'
+                        'when using Data Parallel or Distributed Data Parallel'
+                        )
+    parser.add_argument('-p', '--print-freq', default=10, type=int,
+                        metavar='N', help='print frequency (default: 10)')
+    parser.add_argument('--lr', '--learning-rate', default=0.1, type=float,
+                        metavar='LR', help='initial learning rate', dest='lr')
+    parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
+                        help='momentum')
+    parser.add_argument('--wd', '--weight-decay', default=1e-4, type=float,
+                        metavar='W', help='weight decay (default: 1e-4)',
+                        dest='weight_decay')
+    parser.add_argument('-e', '--evaluate', dest='evaluate',
+                        action='store_true',
+                        help='evaluate model on validation set')
+    parser.add_argument('--pretrained', dest='pretrained', default=True,
+                        action='store_true', help='use pre-trained model')
+    parser.add_argument('--seed', default=None, type=int,
+                        help='seed for initializing training. ')
+    parser.add_argument('--gpu', default=None, type=int, help='GPU id to use.')
+    args = parser.parse_args()
 
-def accuracy(outputs, targets):
-    return 1.0
+    main(args)
+    print('Everything is OK')

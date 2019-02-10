@@ -1,6 +1,6 @@
 
-from torch.utils.data import Dataset
 from PIL import Image
+from torch.utils.data import Dataset
 
 
 class DeepMLDataLoader(Dataset):
@@ -21,9 +21,10 @@ class DeepMLDataLoader(Dataset):
     def __getitem__(self, index):
         img_path = self.df_data['img'][index]
         img = Image.open(img_path)
-        label = -1 if self.is_test else self.df_data['label'][index]
-
+        label = self.df_data['label'][index] if self.is_test else -1
         if self.transform is not None:
             img = self.transform(img)
-
         return img, label
+
+    def __len__(self):
+        return 50  # len(self.df_data)

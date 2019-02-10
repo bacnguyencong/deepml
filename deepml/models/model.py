@@ -1,9 +1,10 @@
 # TODO: Several model will be develop
 import torch.nn as nn
-import torchvision.models as models
-from .embedding import Embedding
 import torch.nn.functional as F
+import torchvision.models as models
+
 from .bninception import bninception
+from .embedding import Embedding
 
 
 class CNNs(nn.Module):

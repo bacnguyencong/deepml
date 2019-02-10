@@ -1,6 +1,7 @@
-from ..contrastive import ContrastiveLoss
-import torch
 import pytest
+import torch
+
+from ..contrastive import ContrastiveLoss
 
 data_size = 32
 input_dim = 3
