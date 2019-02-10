@@ -1,4 +1,4 @@
-from utils import AverageMeter
+from .utils import AverageMeter
 import time
 import torch
 import shutil
