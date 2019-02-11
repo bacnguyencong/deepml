@@ -228,6 +228,11 @@ def test(test_loader, model, args):
     file = open(os.path.join('output', 'nmi.txt'), 'w')
     file.write('%.8f' % nmi)
     file.close()
+    # write the features and labels
+    pd.DataFrame(features).to_csv(os.path.join(
+        'output', 'features.csv'), header=False, index=False)
+    pd.DataFrame(labels).to_csv(os.path.join(
+        'output', 'labels.csv'), header=False, index=False)
 
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
