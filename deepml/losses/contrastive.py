@@ -23,8 +23,9 @@ class ContrastiveLoss(nn.Module):
             dist = torch.pairwise_distance(inputs[i], inputs, keepdim=True)
             dist = torch.pow(dist, 2)
             # adding positive
-            loss.append(torch.masked_select(dist, targets == targets[i]))
+            pos = torch.masked_select(dist, targets == targets[i])
+            loss.append(torch.sum(pos, dim=0, keepdim=True))
             # adding negative
-            loss.append(torch.clamp(self.margin - torch.masked_select(
-                dist, targets != targets[i]), 0.0))
+            neg = self.margin-torch.masked_select(dist, targets != targets[i])
+            loss.append(torch.sum(torch.clamp(neg, 0.0), dim=0, keepdim=True))
         return torch.sum(torch.cat(loss)) / n
