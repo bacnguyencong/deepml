@@ -16,8 +16,13 @@ def nmi_clustering(features, labels, n_cluster=None):
     """
 
     n_cluster = n_cluster or len(np.unique(labels))
-    kmeans = KMeans(n_clusters=n_cluster, n_jobs=-
-                    1, random_state=0).fit(features)
+    kmeans = KMeans(
+        n_clusters=n_cluster,
+        n_init=20,
+        n_jobs=-1,
+        random_state=0
+    ).fit(features)
+
     nmi = normalized_mutual_info_score(
         labels.flatten(),
         kmeans.labels_,

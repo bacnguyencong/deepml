@@ -27,4 +27,4 @@ class DeepMLDataLoader(Dataset):
         return img, label
 
     def __len__(self):
-        return 50  # len(self.df_data)
+        return len(self.df_data)
