@@ -29,7 +29,7 @@ def main(args):
     # setup GPUs or CPUs
     num_device = torch.cuda.device_count()
     gpu_id = torch.cuda.current_device() if num_device > 0 else -1
-    device = torch.device('cuda:%d'.format(gpu_id) if gpu_id >= 0 else 'cpu')
+    device = torch.device(('cuda:%d' % gpu_id) if gpu_id >= 0 else 'cpu')
 
     # build model
     model = CNNs(

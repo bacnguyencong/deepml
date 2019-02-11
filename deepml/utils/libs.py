@@ -221,7 +221,10 @@ def test(test_loader, model, args):
     result = recall_at_k(features, labels, topk)
     recalls = pd.DataFrame({'k': topk, 'recall': result})
     nmi = nmi_clustering(features, labels)
+
+    # write the recall@k results
     recalls.to_csv(os.path.join('output', 'recall.csv'), index=False)
+    # write the clustering results
     file = open(os.path.join('output', 'nmi.txt'), 'w')
     file.write('%.8f' % nmi)
     file.close()
