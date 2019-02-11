@@ -18,13 +18,15 @@ class ContrastiveLoss(nn.Module):
 
     def forward(self, inputs, targets):
         n = inputs.size(0)  # number of inputs
-        loss = torch.Tensor([0])  # total loss
+        loss = list()  # total loss
         for i in range(n):
             dist = torch.pairwise_distance(inputs[i], inputs, keepdim=True)
             dist = torch.pow(dist, 2)
             # adding positive
-            loss += torch.sum(torch.masked_select(dist, targets == targets[i]))
+            loss.append(torch.sum(torch.masked_select(
+                dist, targets == targets[i])))
             # adding negative
-            loss += torch.sum(torch.clamp(self.margin - torch.masked_select(
-                dist, targets != targets[i]), 0.0))
-        return loss / n
+            loss.append(torch.sum(
+                torch.clamp(self.margin - torch.masked_select(
+                    dist, targets != targets[i]), 0.0)))
+        return torch.sum(torch.cat(loss)) / n
