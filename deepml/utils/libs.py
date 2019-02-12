@@ -64,9 +64,6 @@ def compute_feature(data_loader, model, args):
             features.append(model(input).cpu().numpy())
             labels.append(target.cpu().numpy().reshape(-1, 1))
 
-            if i % args.print_freq == 0:
-                print('Test: [{0}/{1}]'.format(i, len(data_loader)))
-
     return np.vstack(features), np.vstack(labels)
 
 
@@ -105,14 +102,15 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
         }, is_best)
         # keep tracking
         losses.append(acc)
+        print(acc[0], acc[1])
         print('Epoch %d:\tRecall@1=%.4f' % (epoch+1, acc[0]))
 
     # write the output
-    tab = pd.DataFrame({'epch': range(args.start_epoch, args.epochs)})
+    tab = pd.DataFrame({'epch': range(args.start_epoch + 1, args.epochs + 1)})
     losses = np.vstack(losses)
     for i, k in enumerate(topk):
         tab['recall_at_{}'.format(k)] = losses[i]
-    tab.to_csv(os.path.join('output', 'train_loss.csv'), index=False)
+    tab.to_csv(os.path.join('output', 'train_track.csv'), index=False)
 
 
 def run_epoch(train_loader, model, criterion, optimizer, epoch, args):

@@ -2,7 +2,7 @@ import numpy as np
 
 from ..recall_at_k import recall_at_k
 
-num_examples = 100
+num_examples = 1000
 num_dim = 5
 num_labels = 3
 topk = (1, 3, 5)
