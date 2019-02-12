@@ -103,7 +103,7 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
             'optimizer': optimizer.state_dict(),
         }, is_best)
         # keep tracking
-        acces.append(acc)
+        acces.append(acc.flatten())
         losses.append(loss)
         print('Epoch %d:\tLoss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
               (epoch+1, loss, acc[0], acc[1]))
