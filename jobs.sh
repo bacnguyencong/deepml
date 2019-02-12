@@ -4,10 +4,10 @@ source activate deepml-env
 export CUDA_VISIBLE_DEVICES=1
 
 DATA='Cub'
-ARCH='bnincepnet'
+ARCH='bninception'
 LOSS='ContrastiveLoss'
 
-LR=0.0001
+LR=0.001
 DIM=128       # embedded feature size
 IMG_SIZE=227  # image size
 BATCH_SIZE=128  # batch size
