@@ -8,8 +8,8 @@ ARCH='bninception'
 LOSS='ContrastiveLoss'
 
 LR=0.00001
-DIM=128       # embedded feature size
-IMG_SIZE=224  # image size
+DIM=128         # embedded feature size
+IMG_SIZE=224    # image size
 BATCH_SIZE=128  # batch size
 EPOCHS=200      # number of epochs
 CHECK_POINT='./output/model_best.pth.tar'

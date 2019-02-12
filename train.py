@@ -2,6 +2,7 @@ import argparse
 import os
 import random
 
+import pretrainedmodels
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
@@ -10,7 +11,6 @@ import deepml
 from deepml import datasets, losses
 from deepml.models import CNNs
 from deepml.utils import libs
-import pretrainedmodels
 
 # list of data paths
 DATA_PATHS = {

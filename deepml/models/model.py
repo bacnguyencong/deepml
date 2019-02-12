@@ -1,6 +1,6 @@
-import torch.nn as nn
 import pretrainedmodels
 import torch
+import torch.nn as nn
 
 
 class CNNs(nn.Module):
