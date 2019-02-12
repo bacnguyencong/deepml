@@ -33,7 +33,8 @@ def main(args):
     device = torch.device(('cuda:%d' % gpu_id) if gpu_id >= 0 else 'cpu')
 
     # build model
-    model = CNNs(out_dim=args.outdim, arch=args.arch)
+    model = CNNs(out_dim=args.outdim, arch=args.arch,
+                 normalized=args.normalized)
     if os.path.isfile(args.checkpoint):
         checkpoint = torch.load(
             args.checkpoint,
@@ -96,6 +97,8 @@ if __name__ == "__main__":
                         help='mini-batch size (default: 256)')
     parser.add_argument('--seed', default=None, type=int,
                         help='seed for initializing training. ')
+    parser.add_argument('--normalized', dest='normalized', default=True,
+                        action='store_true', help='normalize the last layer')
     args = parser.parse_args()
 
     main(args)
