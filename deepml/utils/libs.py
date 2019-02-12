@@ -190,16 +190,16 @@ def test(test_loader, model, args):
     nmi = nmi_clustering(features, labels)
 
     # write the recall@k results
-    recalls.to_csv(os.path.join('output', 'recall.csv'), index=False)
+    recalls.to_csv(os.path.join('output', 'test_recall.csv'), index=False)
     # write the clustering results
-    file = open(os.path.join('output', 'nmi.txt'), 'w')
+    file = open(os.path.join('output', 'test_nmi.txt'), 'w')
     file.write('%.8f' % nmi)
     file.close()
     # write the features and labels
     pd.DataFrame(features).to_csv(os.path.join(
-        'output', 'features.csv'), header=False, index=False)
+        'output', 'test_features.csv'), header=False, index=False)
     pd.DataFrame(labels).to_csv(os.path.join(
-        'output', 'labels.csv'), header=False, index=False)
+        'output', 'test_labels.csv'), header=False, index=False)
 
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
