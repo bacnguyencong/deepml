@@ -19,6 +19,7 @@ class CNNs(nn.Module):
         model.last_linear = nn.Linear(model.last_linear.in_features, out_dim)
         self.arch = arch
         self.base = model
+        self.normalized = normalized
 
     def forward(self, x):
         out = self.base(x)
