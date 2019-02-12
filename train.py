@@ -1,14 +1,15 @@
 import argparse
-import random
 import os
+import random
+
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
 
+import deepml
 from deepml import datasets, losses
 from deepml.models import CNNs
 from deepml.utils import libs
-import deepml
 
 # list of data paths
 DATA_PATHS = {
@@ -45,8 +46,9 @@ def main(args):
     data = datasets.__dict__[args.data](data_path)
 
     train_loader = DataLoader(
-        data.get_train_loader(
-            libs.get_data_augmentation(args.img_size, 'train')
+        data.get_dataloader(
+            ttype='train',
+            transform=libs.get_data_augmentation(args.img_size, 'train')
         ),
         batch_size=args.batch_size,
         shuffle=True,
@@ -55,8 +57,9 @@ def main(args):
     )
 
     valid_loader = DataLoader(
-        data.get_train_loader(
-            libs.get_data_augmentation(args.img_size, 'valid')
+        data.get_dataloader(
+            ttype='valid',
+            transform=libs.get_data_augmentation(args.img_size, 'valid')
         ),
         batch_size=args.batch_size,
         shuffle=False,

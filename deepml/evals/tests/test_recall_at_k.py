@@ -1,4 +1,5 @@
 import numpy as np
+
 from ..recall_at_k import recall_at_k
 
 num_examples = 100

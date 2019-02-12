@@ -1,14 +1,15 @@
 import argparse
-import random
 import os
+import random
+
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
 
+import deepml
 from deepml import datasets
 from deepml.models import CNNs
 from deepml.utils import libs
-import deepml
 
 # list of data paths
 DATA_PATHS = {
@@ -49,8 +50,9 @@ def main(args):
     data = datasets.__dict__[args.data](data_path)
 
     test_loader = DataLoader(
-        data.get_test_loader(
-            libs.get_data_augmentation(args.img_size, 'test')
+        data.get_dataloader(
+            ttype='test',
+            tranform=libs.get_data_augmentation(args.img_size, 'test')
         ),
         batch_size=args.batch_size,
         shuffle=False,

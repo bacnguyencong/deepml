@@ -1,10 +1,8 @@
 import os
 import shutil
-import time
 
 import numpy as np
 import pandas as pd
-
 import torch
 from torchvision import transforms
 
