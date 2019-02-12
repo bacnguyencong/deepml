@@ -16,7 +16,7 @@ class Dataset(ABC):
         Returns:
             Dataloader: The desired Dataloader.
         """
-        raise DeepMLDataLoader(self.df_data[ttype], transform)
+        raise DeepMLDataLoader(self.data_df[ttype], transform)
 
     def compute_dataframe(self, data_path):
         """Compute train, valid, and test dataframes

@@ -20,9 +20,9 @@ class Cub(Dataset):
                 img_list.append([path, img_id])
         df = pd.DataFrame(img_list, columns=['img', 'label'])
         # create a map
-        df_data = {
+        data_df = {
             'train': df[df['label'] <= 100].reset_index(),
             'valid': df[df['label'] <= 100].reset_index(),
             'test': df[df['label'] > 100].reset_index()
         }
-        return df_data
+        return data_df
