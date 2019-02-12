@@ -243,15 +243,15 @@ def get_data_augmentation(img_size, ttype='train'):
 
     if ttype == 'train':
         return transforms.Compose([
-            transforms.Resize(256),
-            transforms.RandomCrop(img_size),
+            transforms.Resize((256, 256)),
+            transforms.RandomCrop((img_size, img_size)),
             transforms.ToTensor(),
             normalize
         ])
 
     return transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(img_size),
+        transforms.Resize((256, 256)),
+        transforms.CenterCrop((img_size, img_size)),
         transforms.ToTensor(),
         normalize
     ])
