@@ -92,7 +92,7 @@ def main(args):
     optimizer = torch.optim.Adam([
         {'params': base_params},
         {'params': linear_params, 'lr': args.lr}
-    ], lr=args.lr*0.1, momentum=0.9, weight_decay=args.weight_decay)
+    ], lr=args.lr*0.1, weight_decay=args.weight_decay)
     # Decay LR by a factor of 0.1 every 10 epochs
     scheduler = torch.optim.lr_scheduler.StepLR(
         optimizer, step_size=10, gamma=0.1)
