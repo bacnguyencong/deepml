@@ -27,5 +27,7 @@ class ContrastiveLoss(nn.Module):
             loss.append(torch.sum(pos, dim=0, keepdim=True))
             # adding negative
             neg = self.margin-torch.masked_select(dist, targets != targets[i])
-            loss.append(torch.sum(torch.clamp(neg, 0.0), dim=0, keepdim=True))
+            if neg.size(0) > 0:
+                loss.append(torch.sum(torch.clamp(
+                    neg, 0.0), dim=0, keepdim=True))
         return torch.sum(torch.cat(loss)) / n
