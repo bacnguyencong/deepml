@@ -1,4 +1,5 @@
 from abc import ABC
+from .loader import DeepMLDataLoader
 
 
 class Dataset(ABC):
@@ -18,7 +19,7 @@ class Dataset(ABC):
 
         raise NotImplementedError
 
-    def compute_dataframe(self, data_path):
+    def compute_dataframe(self, ttype, transform):
         """Compute train, valid, and test dataframes
 
         Args:
@@ -27,4 +28,4 @@ class Dataset(ABC):
         Returns:
             map(str, pd.DataFrame): 'train', 'test', 'valid' dataframes.
         """
-        raise NotImplementedError
+        return DeepMLDataLoader(self.df_data[ttype], transform)

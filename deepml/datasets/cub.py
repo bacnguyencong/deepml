@@ -4,13 +4,9 @@ import os
 import pandas as pd
 
 from .dataset import Dataset
-from .loader import DeepMLDataLoader
 
 
 class Cub(Dataset):
-    def __init__(self, data_path):
-        super(Cub, self).__init__(data_path)
-
     def compute_dataframe(self, data_path):
         # path to all images
         img_path = os.path.join(data_path, 'CUB_200_2011/images')
@@ -23,13 +19,10 @@ class Cub(Dataset):
                 path = os.path.join(parent, img)
                 img_list.append([path, img_id])
         df = pd.DataFrame(img_list, columns=['img', 'label'])
-
-        df_data = dict()
-        df_data['train'] = df[df['label'] <= 100].reset_index()
-        df_data['valid'] = df[df['label'] <= 100].reset_index()
-        df_data['test'] = df[df['label'] > 100].reset_index()
-
+        # create a map
+        df_data = {
+            'train': df[df['label'] <= 100].reset_index(),
+            'valid': df[df['label'] <= 100].reset_index(),
+            'test': df[df['label'] > 100].reset_index()
+        }
         return df_data
-
-    def get_dataloader(self, ttype, transform):
-        return DeepMLDataLoader(self.df_data[ttype], transform)

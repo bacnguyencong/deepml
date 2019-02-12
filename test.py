@@ -52,7 +52,7 @@ def main(args):
     test_loader = DataLoader(
         data.get_dataloader(
             ttype='test',
-            tranform=libs.get_data_augmentation(args.img_size, 'test')
+            transform=libs.get_data_augmentation(args.img_size, 'test')
         ),
         batch_size=args.batch_size,
         shuffle=False,
