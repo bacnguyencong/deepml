@@ -82,33 +82,37 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
         args (Any): The input arguments.
     """
     losses = []
-    best_loss = np.inf
+    best_acc = -np.inf
+    topk = ([1, 5])
+
     for epoch in range(args.start_epoch, args.epochs):
         # adjust the learning rate
         adjust_learning_rate(optimizer, epoch, args)
         # run an epoch
         run_epoch(train_loader, model, criterion, optimizer, epoch, args)
         # compute the valiation
-        loss = validate(val_loader, model, criterion, args)
-        is_best = loss < best_loss
+        acc = validate(val_loader, model, args, topk)
+        is_best = acc[0] > best_acc
         # update best accuracy
-        best_loss = min(best_loss, loss)
+        best_acc = min(best_acc, acc[0])
         # update the best parameters
         save_checkpoint({
             'epoch': epoch + 1,
             'arch': args.arch,
             'state_dict': model.state_dict(),
-            'best_loss': best_loss,
+            'best_loss': best_acc,
             'optimizer': optimizer.state_dict(),
         }, is_best)
         # keep tracking
-        losses.append(loss)
+        losses.append(acc)
+        print('Epoch %d:\tRecall@1=%.4f' % acc[0])
 
     # write the output
-    pd.DataFrame({
-        'epch': range(args.start_epoch, args.epochs),
-        'loss': losses
-    }).to_csv(os.path.join('output', 'train_loss.csv'), index=False)
+    tab = pd.DataFrame({'epch': range(args.start_epoch, args.epochs)})
+    losses = np.vstack(losses)
+    for i, k in enumerate(topk):
+        tab['recall_at_{}'.format(k)] = losses[i]
+    tab.to_csv(os.path.join('output', 'train_loss.csv'), index=False)
 
 
 def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
@@ -150,43 +154,19 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
                       epoch, i, len(train_loader), loss=losses))
 
 
-def validate(val_loader, model, criterion, args):
+def validate(val_loader, model, args, topk):
     """Validate the model.
 
     Args:
         val_loader ([type]): [description]
         model ([type]): [description]
-        criterion ([type]): [description]
         args ([type]): [description]
 
     Returns:
         [type]: [description]
     """
-    losses = AverageMeter()
-
-    # switch to evaluate mode
-    model.eval()
-
-    with torch.no_grad():
-        for i, (input, target) in enumerate(val_loader):
-
-            # place input tensors on the device
-            input = input.to(args.device)
-            target = target.to(args.device)
-
-            # compute output
-            output = model(input)
-            loss = criterion(output, target)
-
-            # measure accuracy and record loss
-            losses.update(loss.item(), input.size(0))
-
-            if i % args.print_freq == 0:
-                print('Validate: [{0}/{1}]\t'
-                      'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
-                          i, len(val_loader), loss=losses))
-        print('Loss: {loss.val:.4f}({loss.avg:.4f})'.format(loss=losses))
-    return losses.avg
+    features, labels = compute_feature(val_loader, model, args)
+    return recall_at_k(features, labels, topk)
 
 
 def test(test_loader, model, args):
