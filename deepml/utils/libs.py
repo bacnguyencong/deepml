@@ -102,8 +102,7 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
         }, is_best)
         # keep tracking
         losses.append(acc)
-        print(acc[0], acc[1])
-        print('Epoch %d:\tRecall@1=%.4f' % (epoch+1, acc[0]))
+        print('Epoch %d:\tRecall\t@1=%.4f\t@5' % (epoch+1, acc[0], acc[1]))
 
     # write the output
     tab = pd.DataFrame({'epch': range(args.start_epoch + 1, args.epochs + 1)})
