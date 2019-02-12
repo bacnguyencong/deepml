@@ -78,7 +78,7 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
         optimizer (Optimizer): The optimizer.
         args (Any): The input arguments.
     """
-    losses = []
+    losses, acces = list(), list()
     best_acc = -np.inf
     topk = ([1, 5])
 
@@ -86,7 +86,8 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
         # adjust the learning rate
         adjust_learning_rate(optimizer, epoch, args)
         # run an epoch
-        run_epoch(train_loader, model, criterion, optimizer, epoch, args)
+        loss = run_epoch(train_loader, model, criterion,
+                         optimizer, epoch, args)
         # compute the valiation
         acc = validate(val_loader, model, args, topk)
         is_best = acc[0] > best_acc
@@ -101,14 +102,19 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
             'optimizer': optimizer.state_dict(),
         }, is_best)
         # keep tracking
-        losses.append(acc)
-        print('Epoch %d:\tRecall\t@1=%.4f\t@5' % (epoch+1, acc[0], acc[1]))
+        acces.append(acc)
+        losses.append(loss)
+        print('Epoch %d:\tLoss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
+              (epoch+1, loss, acc[0], acc[1]))
 
     # write the output
-    tab = pd.DataFrame({'epch': range(args.start_epoch + 1, args.epochs + 1)})
-    losses = np.vstack(losses)
+    tab = pd.DataFrame({
+        'epch': range(args.start_epoch + 1, args.epochs + 1),
+        'loss': np.array(losses)
+    })
+    acces = np.vstack(acces)
     for i, k in enumerate(topk):
-        tab['recall_at_{}'.format(k)] = losses[i]
+        tab['recall_at_{}'.format(k)] = acces[i]
     tab.to_csv(os.path.join('output', 'train_track.csv'), index=False)
 
 
@@ -149,6 +155,7 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
                       epoch, i, len(train_loader), loss=losses))
+    return losses.avg
 
 
 def validate(val_loader, model, args, topk):
