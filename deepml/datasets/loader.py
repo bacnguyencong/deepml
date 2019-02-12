@@ -20,7 +20,9 @@ class DeepMLDataLoader(Dataset):
 
     def __getitem__(self, index):
         img_path = self.df_data['img'][index]
-        img = Image.open(img_path)
+        img = Image.open(img_path).convert('RGB')
+        r, g, b = img.split()
+        img = Image.merge("RGB", (b, g, r))
         label = self.df_data['label'][index] if self.is_test else -1
         if self.transform is not None:
             img = self.transform(img)
