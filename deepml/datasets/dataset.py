@@ -13,13 +13,12 @@ class Dataset(ABC):
             ttype (str): The type of dataloader ('train', 'test', 'valid')
             transform ([type]): [description]
 
-        Raises:
-            NotImplementedError: [description]
+        Returns:
+            Dataloader: The desired Dataloader.
         """
+        raise DeepMLDataLoader(self.df_data[ttype], transform)
 
-        raise NotImplementedError
-
-    def compute_dataframe(self, ttype, transform):
+    def compute_dataframe(self, data_path):
         """Compute train, valid, and test dataframes
 
         Args:
@@ -28,4 +27,4 @@ class Dataset(ABC):
         Returns:
             map(str, pd.DataFrame): 'train', 'test', 'valid' dataframes.
         """
-        return DeepMLDataLoader(self.df_data[ttype], transform)
+        raise NotImplementedError
