@@ -6,7 +6,7 @@ class Dataset(ABC):
     def __init__(self, data_path):
         self.data_df = self.compute_dataframe(data_path)
 
-    def get_dataloader(self, ttype, transform):
+    def get_dataloader(self, ttype, transform, inverted):
         """Compute a dataloader.
 
         Args:
@@ -16,7 +16,7 @@ class Dataset(ABC):
         Returns:
             Dataloader: The desired Dataloader.
         """
-        return DeepMLDataLoader(self.data_df[ttype], transform)
+        return DeepMLDataLoader(self.data_df[ttype], inverted, transform)
 
     def compute_dataframe(self, data_path):
         """Compute train, valid, and test dataframes

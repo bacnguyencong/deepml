@@ -209,7 +209,7 @@ def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
         shutil.copyfile(filename, os.path.join('output', 'model_best.pth.tar'))
 
 
-def get_data_augmentation(img_size, ttype='train'):
+def get_data_augmentation(img_size, mean, std, ttype):
     """Get data augmentation
 
     Args:
@@ -221,14 +221,12 @@ def get_data_augmentation(img_size, ttype='train'):
         Transform: A transform.
     """
     # setup data augmentation
-    normalize = transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-    )
+    normalize = transforms.Normalize(mean=mean, std=std)
 
     if ttype == 'train':
         return transforms.Compose([
             transforms.Resize((256, 256)),
+            transforms.RandomHorizontalFlip(),
             transforms.RandomCrop((img_size, img_size)),
             transforms.ToTensor(),
             normalize

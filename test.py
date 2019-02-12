@@ -6,7 +6,7 @@ import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
 
-import deepml
+import pretrainedmodels
 from deepml import datasets
 from deepml.models import CNNs
 from deepml.utils import libs
@@ -33,7 +33,7 @@ def main(args):
     device = torch.device(('cuda:%d' % gpu_id) if gpu_id >= 0 else 'cpu')
 
     # build model
-    model = CNNs(out_dim=args.outdim, arch=args.arch, pretrained=False)
+    model = CNNs(out_dim=args.outdim, arch=args.arch)
     if os.path.isfile(args.checkpoint):
         checkpoint = torch.load(
             args.checkpoint,
@@ -44,7 +44,7 @@ def main(args):
         raise ValueError(
             "=> No checkpoint found at '{}'".format(args.checkpoint))
     model = model.to(device)
-
+    inverted = (model.base.input_space == 'BGR')
     # setup data set
     data_path = os.path.abspath(DATA_PATHS[args.data])
     data = datasets.__dict__[args.data](data_path)
@@ -52,7 +52,13 @@ def main(args):
     test_loader = DataLoader(
         data.get_dataloader(
             ttype='test',
-            transform=libs.get_data_augmentation(args.img_size, 'test')
+            inverted=inverted,
+            transform=libs.get_data_augmentation(
+                img_size=args.img_size,
+                mean=model.base.mean,
+                std=model.base.std,
+                ttype='test'
+            )
         ),
         batch_size=args.batch_size,
         shuffle=False,
@@ -72,11 +78,11 @@ if __name__ == "__main__":
 
     parser.add_argument('--data', default='Cub', required=True,
                         help='name of the dataset')
-    parser.add_argument('-a', '--arch', metavar='ARCH', default='bnincepnet',
-                        choices=deepml.MODEL_NAMES,
+    parser.add_argument('-a', '--arch', metavar='ARCH', default='bninception',
+                        choices=pretrainedmodels.model_names,
                         help='model architecture: ' +
-                        ' | '.join(deepml.MODEL_NAMES) +
-                        ' (default: bnincepnet)')
+                        ' | '.join(pretrainedmodels.model_names) +
+                        ' (default: bninception)')
     parser.add_argument('-c', '--checkpoint', type=str,
                         default='./output/model_best.pth.tar', metavar='PATH')
     parser.add_argument('-img_size', default=227, type=int,

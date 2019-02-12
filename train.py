@@ -10,6 +10,8 @@ import deepml
 from deepml import datasets, losses
 from deepml.models import CNNs
 from deepml.utils import libs
+import pretrainedmodels
+from torchvision import transforms
 
 # list of data paths
 DATA_PATHS = {
@@ -36,7 +38,8 @@ def main(args):
     model = CNNs(
         out_dim=args.outdim,
         arch=args.arch,
-        pretrained=args.pretrained
+        pretrained=args.pretrained,
+        normalized=args.normalized
     ).to(device)
 
     # setup loss function
@@ -45,10 +48,17 @@ def main(args):
     data_path = os.path.abspath(DATA_PATHS[args.data])
     data = datasets.__dict__[args.data](data_path)
 
+    inverted = (model.base.input_space == 'BGR')
     train_loader = DataLoader(
         data.get_dataloader(
             ttype='train',
-            transform=libs.get_data_augmentation(args.img_size, 'train')
+            inverted=inverted,
+            transform=libs.get_data_augmentation(
+                img_size=args.img_size,
+                mean=model.base.mean,
+                std=model.base.std,
+                ttype='train'
+            )
         ),
         batch_size=args.batch_size,
         shuffle=True,
@@ -59,7 +69,13 @@ def main(args):
     valid_loader = DataLoader(
         data.get_dataloader(
             ttype='valid',
-            transform=libs.get_data_augmentation(args.img_size, 'valid')
+            inverted=inverted,
+            transform=libs.get_data_augmentation(
+                img_size=args.img_size,
+                mean=model.base.mean,
+                std=model.base.std,
+                ttype='valid'
+            )
         ),
         batch_size=args.batch_size,
         shuffle=False,
@@ -87,11 +103,14 @@ if __name__ == "__main__":
 
     parser.add_argument('--data', default='Cub', required=True,
                         help='name of the dataset')
-    parser.add_argument('-a', '--arch', metavar='ARCH', default='bnincepnet',
-                        choices=deepml.MODEL_NAMES,
+    parser.add_argument('-a', '--arch', metavar='ARCH', default='bninception',
+                        choices=pretrainedmodels.model_names,
                         help='model architecture: ' +
-                        ' | '.join(deepml.MODEL_NAMES) +
-                        ' (default: bnincepnet)')
+                        ' | '.join(pretrainedmodels.model_names) +
+                        ' (default: bninception)')
+    parser.add_argument('-p', '--pretrained', metavar='PRET',
+                        default='imagenet',
+                        help='use pre-trained model')
     parser.add_argument('-l', '--loss', metavar='LOSS',
                         default='ContrastiveLoss',
                         choices=deepml.MODEL_LOSSES,
@@ -117,10 +136,10 @@ if __name__ == "__main__":
     parser.add_argument('--wd', '--weight-decay', default=1e-4, type=float,
                         metavar='W', help='weight decay (default: 1e-4)',
                         dest='weight_decay')
-    parser.add_argument('--pretrained', dest='pretrained', default=False,
-                        action='store_true', help='use pre-trained model')
     parser.add_argument('--seed', default=None, type=int,
                         help='seed for initializing training. ')
+    parser.add_argument('--normalized', dest='normalized', default=True,
+                        action='store_true', help='normalize the last layer')
 
     args = parser.parse_args()
 

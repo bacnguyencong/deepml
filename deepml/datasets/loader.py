@@ -12,17 +12,19 @@ class DeepMLDataLoader(Dataset):
             label: the labels
     """
 
-    def __init__(self, df_data, transform=None):
+    def __init__(self, df_data, inverted=False, transform=None):
         super(DeepMLDataLoader, self).__init__()
         self.df_data = df_data
         self.transform = transform
         self.is_test = 'label' in df_data.columns
+        self.inverted = inverted
 
     def __getitem__(self, index):
         img_path = self.df_data['img'][index]
         img = Image.open(img_path).convert('RGB')
-        r, g, b = img.split()
-        img = Image.merge("RGB", (b, g, r))
+        if self.inverted:
+            r, g, b = img.split()
+            img = Image.merge("RGB", (b, g, r))
         label = self.df_data['label'][index] if self.is_test else -1
         if self.transform is not None:
             img = self.transform(img)
