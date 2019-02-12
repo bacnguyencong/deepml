@@ -92,6 +92,9 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
         run_epoch(train_loader, model, criterion, optimizer, epoch, args)
         # compute the valiation
         loss = validate(val_loader, model, criterion, args)
+        is_best = loss < best_loss
+        # update best accuracy
+        best_loss = min(best_loss, loss)
         # update the best parameters
         save_checkpoint({
             'epoch': epoch + 1,
@@ -99,9 +102,7 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
             'state_dict': model.state_dict(),
             'best_loss': best_loss,
             'optimizer': optimizer.state_dict(),
-        }, loss < best_loss)
-        # update best accuracy
-        best_loss = min(best_loss, loss)
+        }, is_best)
         # keep tracking
         losses.append(loss)
 
@@ -123,12 +124,10 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
         epoch ([type]): [description]
         args ([type]): [description]
     """
-    batch_time = AverageMeter()
     losses = AverageMeter()
     # switch to train mode
     model.train()
 
-    end = time.time()
     for i, (input, target) in enumerate(train_loader):
 
         # place input tensors on the device
@@ -147,16 +146,10 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
         loss.backward()
         optimizer.step()
 
-        # measure elapsed time
-        batch_time.update(time.time() - end)
-        end = time.time()
-
         if i % args.print_freq == 0:
             print('Epoch: [{0}][{1}/{2}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
-                      epoch, i, len(train_loader),
-                      batch_time=batch_time, loss=losses))
+                      epoch, i, len(train_loader), loss=losses))
 
 
 def validate(val_loader, model, criterion, args):
@@ -171,15 +164,12 @@ def validate(val_loader, model, criterion, args):
     Returns:
         [type]: [description]
     """
-
-    batch_time = AverageMeter()
     losses = AverageMeter()
 
     # switch to evaluate mode
     model.eval()
 
     with torch.no_grad():
-        end = time.time()
         for i, (input, target) in enumerate(val_loader):
 
             # place input tensors on the device
@@ -193,17 +183,11 @@ def validate(val_loader, model, criterion, args):
             # measure accuracy and record loss
             losses.update(loss.item(), input.size(0))
 
-            # measure elapsed time
-            batch_time.update(time.time() - end)
-            end = time.time()
-
             if i % args.print_freq == 0:
                 print('Validate: [{0}/{1}]\t'
-                      'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                       'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
-                          i, len(val_loader),
-                          batch_time=batch_time, loss=losses))
-
+                          i, len(val_loader), loss=losses))
+        print('Loss: {loss.val:.4f}({loss.avg:.4f})'.format(loss=losses))
     return losses.avg
 
 
@@ -253,24 +237,23 @@ def get_data_augmentation(img_size, ttype='train'):
     Returns:
         Transform: A transform.
     """
-    if ttype == 'valid':
-        ttype = 'test'
-        # setup data augmentation
+    # setup data augmentation
     normalize = transforms.Normalize(
         mean=[0.485, 0.456, 0.406],
         std=[0.229, 0.224, 0.225]
     )
-    trans = dict()
-    trans['train'] = transforms.Compose([
-        transforms.Resize(256),
-        transforms.RandomCrop(img_size),
-        transforms.ToTensor(),
-        normalize
-    ])
-    trans['test'] = transforms.Compose([
+
+    if ttype == 'train':
+        return transforms.Compose([
+            transforms.Resize(256),
+            transforms.RandomCrop(img_size),
+            transforms.ToTensor(),
+            normalize
+        ])
+
+    return transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(img_size),
         transforms.ToTensor(),
         normalize
     ])
-    return trans[ttype]

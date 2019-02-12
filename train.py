@@ -51,7 +51,7 @@ def main(args):
         batch_size=args.batch_size,
         shuffle=True,
         num_workers=args.workers,
-        pin_memory=num_device > 0
+        pin_memory=gpu_id >= 0
     )
 
     valid_loader = DataLoader(
@@ -61,7 +61,7 @@ def main(args):
         batch_size=args.batch_size,
         shuffle=False,
         num_workers=args.workers,
-        pin_memory=num_device > 0
+        pin_memory=gpu_id >= 0
     )
 
     # setup the optimizer

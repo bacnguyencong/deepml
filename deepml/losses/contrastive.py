@@ -24,7 +24,8 @@ class ContrastiveLoss(nn.Module):
             dist = torch.pow(dist, 2)
             # adding positive
             pos = torch.masked_select(dist, targets == targets[i])
-            loss.append(torch.sum(pos, dim=0, keepdim=True))
+            if pos.size(0) > 0:
+                loss.append(torch.sum(pos, dim=0, keepdim=True))
             # adding negative
             neg = self.margin-torch.masked_select(dist, targets != targets[i])
             if neg.size(0) > 0:
