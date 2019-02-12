@@ -105,12 +105,12 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
         # keep tracking
         acces.append(acc)
         losses.append(loss)
-        print('Epoch %d:\tLoss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
-              (epoch+1, loss, acc[0], acc[1]))
+        print('Loss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
+              (loss, acc[0], acc[1]))
 
     # write the output
     tab = pd.DataFrame({
-        'epch': range(args.start_epoch + 1, args.epochs + 1),
+        'epoch': range(args.start_epoch + 1, args.epochs + 1),
         'loss': np.array(losses)
     })
     acces = np.vstack(acces)

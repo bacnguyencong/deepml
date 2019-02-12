@@ -10,7 +10,7 @@ LOSS='ContrastiveLoss'
 LR=0.0001
 DIM=128       # embedded feature size
 IMG_SIZE=227  # image size
-BATCH_SIZE=64  # batch size
+BATCH_SIZE=128  # batch size
 EPOCHS=200      # number of epochs
 CHECK_POINT='./output/model_best.pth.tar'
 
