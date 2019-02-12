@@ -1,5 +1,6 @@
 import os
 import shutil
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
@@ -54,7 +55,7 @@ def compute_feature(data_loader, model, args):
     features, labels = [], []
 
     with torch.no_grad():
-        for i, (input, target) in enumerate(data_loader):
+        for i, (input, target) in enumerate(tqdm(data_loader)):
 
             # place input tensors on the device
             input = input.to(args.device)
