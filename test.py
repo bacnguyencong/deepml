@@ -35,6 +35,8 @@ def main(args):
     # build model
     model = CNNs(out_dim=args.outdim, arch=args.arch,
                  normalized=args.normalized)
+    inverted = (model.base.input_space == 'BGR')
+
     if os.path.isfile(args.checkpoint):
         checkpoint = torch.load(
             args.checkpoint,
@@ -45,7 +47,7 @@ def main(args):
         raise ValueError(
             "=> No checkpoint found at '{}'".format(args.checkpoint))
     model = model.to(device)
-    inverted = (model.base.input_space == 'BGR')
+
     # setup data set
     data_path = os.path.abspath(DATA_PATHS[args.data])
     data = datasets.__dict__[args.data](data_path)
