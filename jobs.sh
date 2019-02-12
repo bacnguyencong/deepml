@@ -19,4 +19,4 @@ PRET='imagenet'
 python train.py --data $DATA -a $ARCH -l $LOSS -img_size $IMG_SIZE -j 8 --lr $LR --epochs $EPOCHS --outdim $DIM -b $BATCH_SIZE --pretrained $PRET --seed 123456 --normalized
 
 # run test python script
-python test.py --data $DATA -a $ARCH -c $CHECK_POINT -img_size $IMG_SIZE -j 8 --outdim $DIM -b $BATCH_SIZE --seed 123456 --normalized
+python test.py --data $DATA -a $ARCH -c $CHECK_POINT -img_size $IMG_SIZE -j 8 --outdim $DIM -b $BATCH_SIZE --pretrained $PRET --seed 123456 --normalized

@@ -33,8 +33,12 @@ def main(args):
     device = torch.device(('cuda:%d' % gpu_id) if gpu_id >= 0 else 'cpu')
 
     # build model
-    model = CNNs(out_dim=args.outdim, arch=args.arch,
-                 normalized=args.normalized)
+    model = CNNs(
+        out_dim=args.outdim,
+        arch=args.arch,
+        pretrained=args.pretrained,
+        normalized=args.normalized
+    )
     inverted = (model.base.input_space == 'BGR')
 
     if os.path.isfile(args.checkpoint):
@@ -86,6 +90,9 @@ if __name__ == "__main__":
                         help='model architecture: ' +
                         ' | '.join(pretrainedmodels.model_names) +
                         ' (default: bninception)')
+    parser.add_argument('-p', '--pretrained', metavar='PRET',
+                        default='imagenet',
+                        help='use pre-trained model')
     parser.add_argument('-c', '--checkpoint', type=str,
                         default='./output/model_best.pth.tar', metavar='PATH')
     parser.add_argument('-img_size', default=227, type=int,
