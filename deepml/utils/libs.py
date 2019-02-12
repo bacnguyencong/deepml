@@ -86,6 +86,8 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
     for epoch in range(args.start_epoch, args.epochs):
         # adjust the learning rate
         adjust_learning_rate(optimizer, epoch, args)
+        if epoch == 1:
+            optimizer.param_groups[0]['lr_mul'] = 0.1
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
                          optimizer, epoch, args)

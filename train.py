@@ -84,8 +84,14 @@ def main(args):
     )
 
     # setup the optimizer
+    new_param_ids = set(map(id, model.base.last_linear.parameters()))
+    new_params = [p for p in model.base.parameters() if id(p) in new_param_ids]
+    base_params = [p for p in model.base.parameters() if id(p)
+                   not in new_param_ids]
+    param_groups = [{'params': base_params, 'lr_mult': 0.0},
+                    {'params': new_params, 'lr_mult': 1.0}]
     optimizer = torch.optim.Adam(
-        model.parameters(),
+        param_groups,
         lr=args.lr,
         weight_decay=args.weight_decay
     )
@@ -129,7 +135,7 @@ if __name__ == "__main__":
     parser.add_argument('-b', '--batch-size', default=256, type=int,
                         metavar='N',
                         help='mini-batch size (default: 256)')
-    parser.add_argument('--lr', '--learning-rate', default=0.0001, type=float,
+    parser.add_argument('--lr', '--learning-rate', default=1e-5, type=float,
                         metavar='LR', help='initial learning rate', dest='lr')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                         help='momentum')
