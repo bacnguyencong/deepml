@@ -94,13 +94,13 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
         acc = validate(val_loader, model, args, topk)
         is_best = acc[0] > best_acc
         # update best accuracy
-        best_acc = min(best_acc, acc[0])
+        best_acc = max(best_acc, acc[0])
         # update the best parameters
         save_checkpoint({
             'epoch': epoch + 1,
             'arch': args.arch,
             'state_dict': model.state_dict(),
-            'best_loss': best_acc,
+            'best_acc': best_acc,
             'optimizer': optimizer.state_dict(),
         }, is_best)
         # keep tracking
