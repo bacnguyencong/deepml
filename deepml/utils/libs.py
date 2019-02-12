@@ -103,7 +103,7 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
             'optimizer': optimizer.state_dict(),
         }, is_best)
         # keep tracking
-        acces.append(acc.flatten())
+        acces.append(acc)
         losses.append(loss)
         print('Epoch %d:\tLoss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
               (epoch+1, loss, acc[0], acc[1]))
@@ -115,7 +115,7 @@ def train(train_loader, val_loader, model, criterion, optimizer, args):
     })
     acces = np.vstack(acces)
     for i, k in enumerate(topk):
-        tab['recall_at_{}'.format(k)] = acces[i]
+        tab['recall_at_{}'.format(k)] = acces[:, i]
     tab.to_csv(os.path.join('output', 'train_track.csv'), index=False)
 
 
