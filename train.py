@@ -13,6 +13,7 @@ from deepml.utils import libs
 import pretrainedmodels
 from torchvision import transforms
 
+
 # list of data paths
 DATA_PATHS = {
     'Cub': './data/cub_200_2011',
@@ -84,24 +85,25 @@ def main(args):
     )
 
     # setup the optimizer
-    new_param_ids = set(map(id, model.base.last_linear.parameters()))
-    new_params = [p for p in model.base.parameters() if id(p) in new_param_ids]
-    base_params = [p for p in model.base.parameters() if id(p)
-                   not in new_param_ids]
-    param_groups = [{'params': base_params, 'lr_mult': 0.0},
-                    {'params': new_params, 'lr_mult': 1.0}]
-    optimizer = torch.optim.Adam(
-        param_groups,
-        lr=args.lr,
-        weight_decay=args.weight_decay
-    )
+    linear_params = model.base.last_linear.parameters()
+    ignored_params = list(map(id, linear_params))
+    base_params = filter(lambda p: id(p) not in ignored_params,
+                         model.parameters())
+    optimizer = torch.optim.Adam([
+        {'params': base_params},
+        {'params': linear_params, 'lr': args.lr}
+    ], lr=args.lr*0.1, momentum=0.9, weight_decay=args.weight_decay)
+    # Decay LR by a factor of 0.1 every 10 epochs
+    scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer, step_size=10, gamma=0.1)
 
     # setup device and print frequency
     args.device = device
     args.print_freq = len(train_loader) // 10
 
     # train the model
-    libs.train(train_loader, valid_loader, model, criterion, optimizer, args)
+    libs.train(train_loader, valid_loader, model,
+               criterion, optimizer, scheduler, args)
 
 
 if __name__ == "__main__":
