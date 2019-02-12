@@ -8,6 +8,9 @@ from .loader import DeepMLDataLoader
 
 
 class Cub(Dataset):
+    def __init__(self, data_path):
+        super(Cub, self).__init__(data_path)
+
     def compute_dataframe(self, data_path):
         # path to all images
         img_path = os.path.join(data_path, 'CUB_200_2011/images')
