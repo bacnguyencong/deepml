@@ -62,7 +62,7 @@ def main(args):
             transform=libs.get_data_augmentation(args.img_size, 'valid')
         ),
         batch_size=args.batch_size,
-        shuffle=False,
+        shuffle=True,
         num_workers=args.workers,
         pin_memory=gpu_id >= 0
     )
