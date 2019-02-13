@@ -21,4 +21,6 @@ class Car(Dataset):
             'valid': df[df['label'] <= 98].reset_index(),
             'test': df[df['label'] > 98].reset_index()
         }
+        # check if data were loaded correctly
+        assert len(data_df['train']) == 8054 and len(data_df['test']) == 8131
         return data_df

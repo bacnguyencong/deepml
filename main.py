@@ -1,10 +1,9 @@
 import numpy as np
 import torch
 import os
-import matplotlib.pyplot as plt
-#from deepml.models import CNNs
+# from deepml.models import CNNs
 
-from deepml.datasets import Car
+from deepml.datasets import Stanford
 from PIL import Image
 
 """
@@ -14,5 +13,11 @@ x = model(input_224)
 print(x)
 """
 data_path = os.path.abspath('./data/cars196')
-data = Car(data_path)
-train = data.get_dataloader(ttype='train', transform=None, inverted=False)
+data_path = os.path.abspath('./data/stanford')
+data = Stanford(data_path)
+
+same = data.data_df['train']['label'] == 765
+go = data.data_df['train'][same].reset_index()
+
+for i in range(4):
+    Image.open(go['img'][i]).show()

@@ -25,4 +25,6 @@ class Cub(Dataset):
             'valid': df[df['label'] <= 100].reset_index(),
             'test': df[df['label'] > 100].reset_index()
         }
+        # check if data were loaded correctly
+        assert len(data_df['train']) == 5864 and len(data_df['test']) == 5924
         return data_df
