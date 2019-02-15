@@ -7,7 +7,7 @@ DATA='Cub'
 ARCH='bninception'
 LOSS='Jeffrey'
 
-LR=0.00001
+LR=0.0001
 DIM=128         # embedded feature size
 IMG_SIZE=224    # image size
 BATCH_SIZE=128  # batch size
