@@ -23,5 +23,7 @@ dependencies:
  - pytorch
  - torchvision
  - tqdm
+ - seaborn
+ - matplotlib
  - pip:
     - pretrainedmodels
