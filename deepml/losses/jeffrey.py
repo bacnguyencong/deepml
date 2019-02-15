@@ -23,6 +23,7 @@ class Jeffrey(nn.Module):
                 dis.append(neg)
         a = torch.mean(torch.cat(sim, dim=0))
         b = torch.mean(torch.cat(dis, dim=0))
+        print(a, b)
         return -a/b - b/a
         """
         dist = torch.pairwise_distance(inputs, torch.cat(
