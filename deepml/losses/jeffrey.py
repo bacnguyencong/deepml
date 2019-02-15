@@ -17,6 +17,10 @@ class Jeffrey(nn.Module):
             (targets[-1:], targets[:-1])))
         if selected.size(0) > 0:
             pos = pos + torch.mean(selected)
+        else:
+            print('no pos found')
         if nonselec.size(0) > 0:
             neg = neg + torch.mean(nonselec)
+        else:
+            print('no neg found')
         return -pos / neg - neg / pos
