@@ -4,7 +4,7 @@ source activate deepml-env
 export CUDA_VISIBLE_DEVICES=1
 
 DATA='Cub'
-ARCH='resnet50'
+ARCH='resnet18'
 LOSS='Jeffrey'
 
 LR=0.0001
