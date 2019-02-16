@@ -30,8 +30,8 @@ class Jeffrey(nn.Module):
 
         pos_dif = torch.cat(sim, dim=0)
         neg_dif = torch.cat(dis, dim=0)
-        pos_tag = torch.ones((pos_dif.size(0), 1), dtype=torch.double)
-        neg_tag = torch.zeros((neg_dif.size(0), 1), dtype=torch.double)
+        pos_tag = torch.ones((pos_dif.size(0), 1), dtype=torch.double).cuda()
+        neg_tag = torch.zeros((neg_dif.size(0), 1), dtype=torch.double).cuda()
 
         # compute covariance matrices
         sigma0 = self.cov(neg_dif)
