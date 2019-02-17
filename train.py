@@ -49,20 +49,18 @@ def main(args):
     data = datasets.__dict__[args.data](data_path)
 
     inverted = (model.base.input_space == 'BGR')
-
-    dloader = data.get_dataloader(
-        ttype='train',
-        inverted=inverted,
-        transform=libs.get_data_augmentation(
-            img_size=args.img_size,
-            mean=model.base.mean,
-            std=model.base.std,
-            ttype='train'
-        )
-    )
     # sampler = RandomIdentitySampler(dloader, 8)
     train_loader = DataLoader(
-        dloader,
+        data.get_dataloader(
+            ttype='train',
+            inverted=inverted,
+            transform=libs.get_data_augmentation(
+                img_size=args.img_size,
+                mean=model.base.mean,
+                std=model.base.std,
+                ttype='train'
+            )
+        ),
         batch_size=args.batch_size,
         drop_last=True,
         shuffle=True,
@@ -92,12 +90,15 @@ def main(args):
     ignored_params = list(map(id, linear_params))
     base_params = filter(lambda p: id(p) not in ignored_params,
                          model.parameters())
+    """
     for param in base_params:
         param.requires_grad = False
+    """
     optimizer = torch.optim.Adam([
         {'params': base_params},
         {'params': linear_params, 'lr': args.lr}
     ], lr=args.lr*0.1, weight_decay=args.weight_decay)
+
     # Decay LR by a factor of 0.1 every 10 epochs
     scheduler = torch.optim.lr_scheduler.StepLR(
         optimizer, step_size=10, gamma=0.1)
