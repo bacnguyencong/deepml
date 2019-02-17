@@ -139,7 +139,7 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
         # place input tensors on the device
         input = input.to(args.device)
         target = target.to(args.device)
-
+        print(target)
         # compute output
         output = model(input)
         loss = criterion(output, target)

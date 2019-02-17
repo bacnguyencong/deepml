@@ -11,6 +11,7 @@ import deepml
 from deepml import datasets, losses
 from deepml.models import CNNs
 from deepml.utils import libs
+from deepml.utils import FastRandomIdentitySampler
 
 # list of data paths
 DATA_PATHS = {
@@ -48,19 +49,24 @@ def main(args):
     data = datasets.__dict__[args.data](data_path)
 
     inverted = (model.base.input_space == 'BGR')
+
+    dloader = data.get_dataloader(
+        ttype='train',
+        inverted=inverted,
+        transform=libs.get_data_augmentation(
+            img_size=args.img_size,
+            mean=model.base.mean,
+            std=model.base.std,
+            ttype='train'
+        )
+    )
+    sampler = FastRandomIdentitySampler(dloader, 8)
     train_loader = DataLoader(
-        data.get_dataloader(
-            ttype='train',
-            inverted=inverted,
-            transform=libs.get_data_augmentation(
-                img_size=args.img_size,
-                mean=model.base.mean,
-                std=model.base.std,
-                ttype='train'
-            )
-        ),
+        dloader,
+        sampler=sampler,
         batch_size=args.batch_size,
-        shuffle=True,
+        drop_last=True,
+        # shuffle=True,
         num_workers=args.workers,
         pin_memory=gpu_id >= 0
     )
