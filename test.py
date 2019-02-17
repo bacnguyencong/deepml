@@ -74,7 +74,7 @@ def main(args):
     )
 
     args.device = device
-    args.print_freq = len(test_loader) // 10
+    args.print_freq = len(test_loader) // 5
 
     # test the model
     libs.test(test_loader, model, args)

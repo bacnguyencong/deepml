@@ -105,7 +105,7 @@ def main(args):
 
     # setup device and print frequency
     args.device = device
-    args.print_freq = max(1, len(train_loader) // 10)
+    args.print_freq = max(1, len(train_loader) // 5)
 
     # train the model
     libs.train(train_loader, valid_loader, model,
