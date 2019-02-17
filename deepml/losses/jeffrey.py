@@ -36,8 +36,8 @@ class Jeffrey(nn.Module):
         neg_tag = torch.zeros((neg_dif.size(0), 1), dtype=torch.float).cuda()
 
         # compute covariance matrices
-        sigma0 = self.cov(neg_dif, 1e-1)
-        sigma1 = self.cov(pos_dif, 1e-5)
+        sigma0 = self.cov(neg_dif, 1e-5)
+        sigma1 = self.cov(pos_dif, 1e-1)
 
         # print('0 - Min: {}, Max: {}'.format(torch.min(sigma0), torch.max(sigma0)))
         # print('1 - Min: {}, Max: {}'.format(torch.min(sigma1), torch.max(sigma1)))
