@@ -10,7 +10,7 @@ class Jeffrey(nn.Module):
     def cov(self, inputs):
         """Compute the covariance of differences."""
         diff = inputs.detach()
-        cov = torch.sum(torch.pow(diff, 2), 0, keepdim=True) + 1e-6
+        cov = torch.sum(torch.pow(diff, 2), 0, keepdim=True) + 1e-5
         return cov / diff.size(0)
 
     def forward(self, inputs, targets):
