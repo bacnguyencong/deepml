@@ -84,8 +84,6 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
     topk = ([1, 5])
 
     for epoch in range(args.start_epoch, args.epochs):
-        # adjust the learning rate
-        scheduler.step()
         print('Learning rate is ', scheduler.get_lr())
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
@@ -108,6 +106,8 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
         losses.append(loss)
         print('Loss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
               (loss, acc[0], acc[1]))
+        # adjust the learning rate
+        scheduler.step(acc[0])
 
     # write the output
     tab = pd.DataFrame({

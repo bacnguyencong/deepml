@@ -100,8 +100,10 @@ def main(args):
     ], lr=args.lr*0.1, weight_decay=args.weight_decay)
 
     # Decay LR by a factor of 0.1 every 10 epochs
-    scheduler = torch.optim.lr_scheduler.StepLR(
-        optimizer, step_size=10, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, 'max', factor=0.5, patience=5)
+    # scheduler = torch.optim.lr_scheduler.StepLR(
+    #   optimizer, step_size=10, gamma=0.1)
 
     # setup device and print frequency
     args.device = device
