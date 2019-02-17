@@ -3,7 +3,10 @@ import torch
 import os
 # from deepml.models import CNNs
 
-from deepml.datasets import Stanford
+from deepml.utils import libs
+from torch.utils.data import DataLoader
+
+from deepml.datasets import Stanford, Cub
 from deepml.utils import FastRandomIdentitySampler
 from PIL import Image
 
@@ -15,9 +18,31 @@ print(x)
 """
 data_path = os.path.abspath('./data/cars196')
 data_path = os.path.abspath('./data/stanford')
-data = Stanford(data_path)
+data_path = os.path.abspath('./data/cub_200_2011')
+data = Cub(data_path)
 
-FastRandomIdentitySampler(data.get_dataloader('train', None, False), 2)
+dloader = data.get_dataloader(
+    ttype='train',
+    inverted=False,
+    transform=libs.get_data_augmentation(
+        img_size=224,
+        mean=[1, 1, 1],
+        std=[0, 0, 0],
+        ttype='train'
+    )
+)
+sampler = FastRandomIdentitySampler(dloader, 8)
+train_loader = DataLoader(
+    dloader,
+    sampler=sampler,
+    batch_size=128,
+    drop_last=True,
+    # shuffle=True,
+    num_workers=1,
+    pin_memory=0
+)
+
+print(len(train_loader), len(sampler))
 
 
 """
