@@ -7,10 +7,10 @@ class Jeffrey(nn.Module):
         super(Jeffrey, self).__init__()
         self.loss = nn.BCEWithLogitsLoss()
 
-    def cov(self, inputs):
+    def cov(self, inputs, eps):
         """Compute the covariance of differences."""
         diff = inputs.detach()
-        cov = torch.sum(torch.pow(diff, 2), 0, keepdim=True) + 1e-5
+        cov = torch.sum(torch.pow(diff, 2), 0, keepdim=True) + eps
         return cov / diff.size(0)
 
     def forward(self, inputs, targets):
@@ -36,11 +36,11 @@ class Jeffrey(nn.Module):
         neg_tag = torch.zeros((neg_dif.size(0), 1), dtype=torch.float).cuda()
 
         # compute covariance matrices
-        sigma0 = self.cov(neg_dif)
-        sigma1 = self.cov(pos_dif)
+        sigma0 = self.cov(neg_dif, 1e-2)
+        sigma1 = self.cov(pos_dif, 1e-5)
 
-        print('0 - Min: {}, Max: {}'.format(torch.min(sigma0), torch.max(sigma0)))
-        print('1 - Min: {}, Max: {}'.format(torch.min(sigma1), torch.max(sigma1)))
+        # print('0 - Min: {}, Max: {}'.format(torch.min(sigma0), torch.max(sigma0)))
+        # print('1 - Min: {}, Max: {}'.format(torch.min(sigma1), torch.max(sigma1)))
         # print(sigma0)
         # print(sigma1)
 
