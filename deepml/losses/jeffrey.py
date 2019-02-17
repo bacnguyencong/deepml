@@ -37,7 +37,7 @@ class Jeffrey(nn.Module):
         sigma0 = self.cov(neg_dif)
         sigma1 = self.cov(pos_dif)
 
-        weights = torch.pow(sigma1, -1) - torch.pow(sigma0, -1)
+        weights = torch.pow(sigma0, -1) - torch.pow(sigma1, -1)
         # compute (x_i - x_j)^T * (Sigma^{-1}_1 - Simga^{-1}_0) * (x_i - x_j)
         a = torch.sum(torch.pow(pos_dif, 2) * weights, dim=1, keepdim=True)
         b = torch.sum(torch.pow(neg_dif, 2) * weights, dim=1, keepdim=True)
