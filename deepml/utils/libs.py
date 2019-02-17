@@ -224,9 +224,11 @@ def get_data_augmentation(img_size, mean, std, ttype):
     mean = np.array(mean)
     std = np.array(std)
     # fix the error
+    """
     if (mean[0] > 1):
         mean = mean / 255.0
         std = std / 255.0
+    """
     normalize = transforms.Normalize(mean=mean, std=std)
 
     if ttype == 'train':
