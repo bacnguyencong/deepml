@@ -39,10 +39,10 @@ class Jeffrey(nn.Module):
         sigma0 = self.cov(neg_dif)
         sigma1 = self.cov(pos_dif)
 
-        print('Min: {}, Max: {}'.format(torch.min(sigma0), torch.max(sigma0)))
-        print('Min: {}, Max: {}'.format(torch.min(sigma1), torch.max(sigma1)))
-        print(sigma0)
-        print(sigma1)
+        print('0 - Min: {}, Max: {}'.format(torch.min(sigma0), torch.max(sigma0)))
+        print('1 - Min: {}, Max: {}'.format(torch.min(sigma1), torch.max(sigma1)))
+        # print(sigma0)
+        # print(sigma1)
 
         weights = torch.pow(sigma0, -1) - torch.pow(sigma1, -1)
         # compute (x_i - x_j)^T * (Sigma^{-1}_1 - Simga^{-1}_0) * (x_i - x_j)
