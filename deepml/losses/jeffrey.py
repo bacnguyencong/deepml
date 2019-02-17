@@ -42,9 +42,8 @@ class Jeffrey(nn.Module):
         a = torch.sum(torch.pow(pos_dif, 2) * weights, dim=1, keepdim=True)
         b = torch.sum(torch.pow(neg_dif, 2) * weights, dim=1, keepdim=True)
 
-        coef = torch.sum(torch.log(sigma0) - torch.log(sigma1))
-        print('{} {}'.format(torch.sum(torch.log(sigma0)),
-                             torch.sum(torch.log(sigma1))))
+        # coef = torch.sum(torch.log(sigma0) - torch.log(sigma1))
+        print('{} {}'.format(torch.mean(a), torch.mean(b)))
         in_logits = torch.cat([a, b], dim=0)  # * 0.5 + coef
         out_logits = torch.cat([pos_tag, neg_tag])
 
