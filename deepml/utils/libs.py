@@ -86,7 +86,7 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
     for epoch in range(args.start_epoch, args.epochs):
         # adjust the learning rate
         scheduler.step()
-        print(scheduler.get_lr())
+        print('Learning rate is ', scheduler.get_lr())
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
                          optimizer, epoch, args)
