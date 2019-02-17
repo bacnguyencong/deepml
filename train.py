@@ -70,13 +70,13 @@ def main(args):
 
     valid_loader = DataLoader(
         data.get_dataloader(
-            ttype='test',
+            ttype='valid',
             inverted=inverted,
             transform=libs.get_data_augmentation(
                 img_size=args.img_size,
                 mean=model.base.mean,
                 std=model.base.std,
-                ttype='test'
+                ttype='valid'
             )
         ),
         batch_size=args.batch_size,
