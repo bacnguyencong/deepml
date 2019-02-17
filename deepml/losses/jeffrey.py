@@ -45,7 +45,7 @@ class Jeffrey(nn.Module):
         coef = torch.sum(torch.log(sigma0) - torch.log(sigma1))
         print('{} {}'.format(torch.mean(a) * 0.5 +
                              coef, torch.mean(b) * 0.5 + coef))
-        in_logits = torch.cat([a, b], dim=0)  # * 0.5 + coef
+        in_logits = torch.cat([a, b], dim=0) * 0.5 + coef
         out_logits = torch.cat([pos_tag, neg_tag])
 
         # compute the loss
