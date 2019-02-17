@@ -11,7 +11,7 @@ import deepml
 from deepml import datasets, losses
 from deepml.models import CNNs
 from deepml.utils import libs
-from deepml.utils import FastRandomIdentitySampler
+from deepml.utils import RandomIdentitySampler
 
 # list of data paths
 DATA_PATHS = {
@@ -60,7 +60,7 @@ def main(args):
             ttype='train'
         )
     )
-    sampler = FastRandomIdentitySampler(dloader, 8)
+    sampler = RandomIdentitySampler(dloader, 8)
     train_loader = DataLoader(
         dloader,
         sampler=sampler,
