@@ -221,8 +221,8 @@ def get_data_augmentation(img_size, mean, std, ttype):
         Transform: A transform.
     """
     # setup data augmentation
-    mean = np.array(mean)
-    std = np.array(std)
+    mean = np.array(mean).astype(np.float)
+    std = np.array(std).astype(np.float)
     # fix the error
     """
     if (mean[0] > 1):
