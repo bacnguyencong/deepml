@@ -106,7 +106,7 @@ if __name__ == "__main__":
                         help='mini-batch size (default: 256)')
     parser.add_argument('--seed', default=None, type=int,
                         help='seed for initializing training. ')
-    parser.add_argument('--normalized', dest='normalized', default=True,
+    parser.add_argument('--normalized', dest='normalized',
                         action='store_true', help='normalize the last layer')
     args = parser.parse_args()
 
