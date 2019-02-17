@@ -19,7 +19,9 @@ class Jeffrey(nn.Module):
         dis = list()
         for i in range(n):
             # adding positive
-            pos = inputs[targets.squeeze() == targets[i]]
+            idx = targets.squeeze() == targets[i]
+            idx[i] = 0  # remove i-th sample
+            pos = inputs[idx]
             if pos.size(0) > 0:
                 sim.append(inputs[i] - pos)
 

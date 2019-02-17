@@ -60,13 +60,12 @@ def main(args):
             ttype='train'
         )
     )
-    sampler = RandomIdentitySampler(dloader, 8)
+    # sampler = RandomIdentitySampler(dloader, 8)
     train_loader = DataLoader(
         dloader,
-        sampler=sampler,
         batch_size=args.batch_size,
         drop_last=True,
-        # shuffle=True,
+        shuffle=True,
         num_workers=args.workers,
         pin_memory=gpu_id >= 0
     )
