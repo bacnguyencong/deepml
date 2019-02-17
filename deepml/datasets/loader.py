@@ -1,6 +1,7 @@
 
 from PIL import Image
 from torch.utils.data import Dataset
+from collections import defaultdict
 
 
 class DeepMLDataLoader(Dataset):
@@ -18,6 +19,10 @@ class DeepMLDataLoader(Dataset):
         self.transform = transform
         self.is_test = 'label' in df_data.columns
         self.inverted = inverted
+        # compute an Index dictionary for every label
+        self.Index = defaultdict(list)
+        for i, pid in enumerate(df_data['label']):
+            self.Index[pid].append(i)
 
     def __getitem__(self, index):
         img_path = self.df_data['img'][index]

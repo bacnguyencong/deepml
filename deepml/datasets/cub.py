@@ -21,9 +21,9 @@ class Cub(Dataset):
         df = pd.DataFrame(img_list, columns=['img', 'label'])
         # create a map
         data_df = {
-            'train': df[df['label'] <= 100].reset_index(),
-            'valid': df[df['label'] <= 100].reset_index(),
-            'test': df[df['label'] > 100].reset_index()
+            'train': df[df['label'] <= 100].reset_index(drop=True),
+            'valid': df[df['label'] <= 100].reset_index(drop=True),
+            'test': df[df['label'] > 100].reset_index(drop=True)
         }
         # check if data were loaded correctly
         assert len(data_df['train']) == 5864 and len(data_df['test']) == 5924

@@ -4,6 +4,7 @@ import os
 # from deepml.models import CNNs
 
 from deepml.datasets import Stanford
+from deepml.utils import FastRandomIdentitySampler
 from PIL import Image
 
 """
@@ -16,8 +17,13 @@ data_path = os.path.abspath('./data/cars196')
 data_path = os.path.abspath('./data/stanford')
 data = Stanford(data_path)
 
+FastRandomIdentitySampler(data.get_dataloader('train', None, False), 2)
+
+
+"""
 same = data.data_df['train']['label'] == 765
 go = data.data_df['train'][same].reset_index()
 
 for i in range(4):
     Image.open(go['img'][i]).show()
+"""
