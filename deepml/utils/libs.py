@@ -88,7 +88,7 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
         # build the triplets
         if epoch % 5 == 0:
             print('Rebuiding the targets and triplets...')
-            X, y = compute_feature(train_loader, model, args)
+            X, y = compute_feature(val_loader, model, args)
             train_loader.generate_batches(X, y)
 
         # run an epoch
