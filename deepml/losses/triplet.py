@@ -27,5 +27,6 @@ class TripletLoss(nn.Module):
             imps = inputs[T[2][i:i+addBlocks]]
             pos = torch.sum(torch.pow(tars - ancs, 2), dim=1, keepdim=True)
             neg = torch.sum(torch.pow(imps - ancs, 2), dim=1, keepdim=True)
-            loss.append(torch.sum(torch.clamp(pos + self.margin - neg, 0))/n)
+            loss.append(torch.sum(torch.clamp(
+                pos + self.margin - neg, 0),  dim=0, keepdim=True)/n)
         return torch.sum(torch.cat(loss))
