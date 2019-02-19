@@ -4,6 +4,7 @@ from torch.utils.data import Dataset
 from collections import defaultdict
 from sklearn.cluster import KMeans
 import numpy as np
+import np.matlib as matl
 import torch
 from sklearn.metrics import pairwise_distances
 
@@ -19,9 +20,9 @@ def _generate_triplet(inds, tars, imps):
     assert n == len(np.unique(inds))
     """
     T = np.zeros((3, n*k1*k2), dtype=np.int)
-    T[0] = np.matlib.repmat(inds.reshape(-1, 1), 1, k1 * k2).flatten()
-    T[1] = np.matlib.repmat(tars.T.flatten().reshape(-1, 1), 1, k2).flatten()
-    T[2] = np.matlib.repmat(imps.reshape(-1, 1), k1 * n, 1).flatten()
+    T[0] = matl.repmat(inds.reshape(-1, 1), 1, k1 * k2).flatten()
+    T[1] = matl.repmat(tars.T.flatten().reshape(-1, 1), 1, k2).flatten()
+    T[2] = matl.repmat(imps.reshape(-1, 1), k1 * n, 1).flatten()
     return T
 
 
