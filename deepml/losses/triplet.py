@@ -16,7 +16,7 @@ class TripletLoss(nn.Module):
         self.margin = margin
 
     def forward(self, inputs, targets, *args):
-        T = args[1]
+        T = args[0]
         n = T.shape[1]
         maxBlocks = 100
         loss = list()  # total loss
