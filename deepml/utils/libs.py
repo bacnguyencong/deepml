@@ -85,19 +85,23 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
 
     for epoch in range(args.start_epoch, args.epochs):
 
+        # build the triplets
         if epoch % 5 == 0:
-            # build the triplets
             print('Rebuiding the targets and triplets...')
-            X, y = compute_feature(val_loader, model, args)
+            X, y = compute_feature(train_loader, model, args)
             train_loader.generate_batches(X, y)
+
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
                          optimizer, epoch, args)
+
         # compute the valiation
         acc = validate(val_loader, model, args, topk)
         is_best = acc[0] > best_acc
+
         # update best accuracy
         best_acc = max(best_acc, acc[0])
+
         # update the best parameters
         save_checkpoint({
             'epoch': epoch + 1,
@@ -106,11 +110,13 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
             'best_acc': best_acc,
             'optimizer': optimizer.state_dict(),
         }, is_best)
+
         # keep tracking
         acces.append(acc)
         losses.append(loss)
         print('Loss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
               (loss, acc[0], acc[1]))
+
         # adjust the learning rate
         scheduler.step(acc[0])
 

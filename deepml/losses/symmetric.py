@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 
 
-class TripletLoss(nn.Module):
-    """Implement the triplet loss function [bac]_.
+class SymTripletLoss(nn.Module):
+    """Implement the symmetric loss
 
     Args:
         margin (float, optional): The loss margin. Defaults to 0.5.
@@ -11,9 +11,8 @@ class TripletLoss(nn.Module):
     .. bac:
     """
 
-    def __init__(self, margin=0.2, **kwargs):
-        super(TripletLoss, self).__init__()
-        self.margin = margin
+    def __init__(self, **kwargs):
+        super(SymTripletLoss, self).__init__()
 
     def forward(self, inputs, targets, *args):
         T = args[0]
