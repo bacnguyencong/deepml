@@ -148,7 +148,7 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
 
         # compute output
         output = model(input)
-        if len(data > 2):
+        if len(data) > 2:
             loss = criterion(output, target, data[2])
         else:
             loss = criterion(output, target)
