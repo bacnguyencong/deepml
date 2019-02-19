@@ -4,7 +4,7 @@ from torch.utils.data import Dataset
 from collections import defaultdict
 from sklearn.cluster import KMeans
 import numpy as np
-import np.matlib as matl
+import numpy.matlib as matl
 import torch
 from sklearn.metrics import pairwise_distances
 
