@@ -57,7 +57,7 @@ def main(args):
     data = datasets.__dict__[args.data](data_path)
 
     test_loader = DataLoader(
-        data.get_dataloader(
+        data.get_dataset(
             ttype='test',
             inverted=inverted,
             transform=libs.get_data_augmentation(

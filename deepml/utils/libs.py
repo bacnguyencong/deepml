@@ -84,6 +84,12 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
     topk = ([1, 5])
 
     for epoch in range(args.start_epoch, args.epochs):
+
+        if epoch % 5 == 0:
+            # build the triplets
+            print('Rebuiding the targets and triplets...')
+            X, y = compute_feature(val_loader, model, args)
+            train_loader.generate_batches(X, y)
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
                          optimizer, epoch, args)
@@ -134,15 +140,18 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
     # switch to train mode
     model.train()
 
-    for i, (input, target) in enumerate(train_loader):
+    for i, data in enumerate(train_loader):
 
         # place input tensors on the device
-        input = input.to(args.device)
-        target = target.to(args.device)
+        input = data[0].to(args.device)
+        target = data[1].to(args.device)
 
         # compute output
         output = model(input)
-        loss = criterion(output, target)
+        if len(data > 2):
+            loss = criterion(output, target, data[2])
+        else:
+            loss = criterion(output, target)
 
         # measure accuracy and record loss
         losses.update(loss.item(), input.size(0))

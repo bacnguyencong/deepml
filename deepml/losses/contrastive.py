@@ -16,7 +16,7 @@ class ContrastiveLoss(nn.Module):
         super(ContrastiveLoss, self).__init__()
         self.margin = margin
 
-    def forward(self, inputs, targets):
+    def forward(self, inputs, targets, *args):
         n = inputs.size(0)  # number of inputs
         loss = list()  # total loss
         for i in range(n):

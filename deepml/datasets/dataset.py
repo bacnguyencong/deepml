@@ -1,23 +1,23 @@
 from abc import ABC
 
-from .loader import DeepMLDataLoader
+from .loader import DeepMLDataset
 
 
 class Dataset(ABC):
     def __init__(self, data_path):
         self.data_df = self.compute_dataframe(data_path)
 
-    def get_dataloader(self, ttype, transform, inverted):
-        """Compute a dataloader.
+    def get_dataset(self, ttype, transform, inverted):
+        """Compute a dataset.
 
         Args:
-            ttype (str): The type of dataloader ('train', 'test', 'valid')
+            ttype (str): The type of dataset ('train', 'test', 'valid')
             transform ([type]): [description]
 
         Returns:
-            Dataloader: The desired Dataloader.
+            Dataloader: The desired Dataset.
         """
-        return DeepMLDataLoader(self.data_df[ttype], inverted, transform)
+        return DeepMLDataset(self.data_df[ttype], inverted, transform)
 
     def compute_dataframe(self, data_path):
         """Compute train, valid, and test dataframes

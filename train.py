@@ -13,6 +13,8 @@ from deepml.models import CNNs
 from deepml.utils import libs
 from deepml.utils import RandomIdentitySampler
 
+from deepml.datasets.loader import DeepMLDataLoader
+
 # list of data paths
 DATA_PATHS = {
     'Cub': './data/cub_200_2011',
@@ -50,8 +52,9 @@ def main(args):
 
     inverted = (model.base.input_space == 'BGR')
     # sampler = RandomIdentitySampler(dloader, 8)
+    """
     train_loader = DataLoader(
-        data.get_dataloader(
+        data.get_dataset(
             ttype='train',
             inverted=inverted,
             transform=libs.get_data_augmentation(
@@ -67,9 +70,26 @@ def main(args):
         num_workers=args.workers,
         pin_memory=gpu_id >= 0
     )
+    """
+    dataset = data.get_dataset(
+        ttype='train',
+        inverted=inverted,
+        transform=libs.get_data_augmentation(
+            img_size=args.img_size,
+            mean=model.base.mean,
+            std=model.base.std,
+            ttype='train'
+        )
+    )
+
+    train_loader = DeepMLDataLoader(
+        dataset,
+        batch_size=args.batch_size,
+        n_targets=3
+    )
 
     valid_loader = DataLoader(
-        data.get_dataloader(
+        data.get_dataset(
             ttype='valid',
             inverted=inverted,
             transform=libs.get_data_augmentation(
