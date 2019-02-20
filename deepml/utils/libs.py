@@ -68,7 +68,7 @@ def compute_feature(data_loader, model, args):
     return np.vstack(features), np.vstack(labels)
 
 
-def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args):
+def train(train_loader, val_loader, test_loader, model, criterion, optimizer, scheduler, args):
     """Train the model.
 
     Args:
@@ -86,10 +86,9 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
     for epoch in range(args.start_epoch, args.epochs):
 
         # build the triplets
-        if epoch % 5 == 0:
-            print('Rebuiding the targets and triplets...')
-            X, y = compute_feature(val_loader, model, args)
-            train_loader.generate_batches(X, y)
+        print('Rebuiding the targets and triplets...')
+        X, y = compute_feature(val_loader, model, args)
+        train_loader.generate_batches(X, y)
 
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
@@ -119,6 +118,9 @@ def train(train_loader, val_loader, model, criterion, optimizer, scheduler, args
 
         # adjust the learning rate
         scheduler.step(acc[0])
+
+        acc = validate(test_loader, model, args, topk)
+        print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (acc[0], acc[1]))
 
     # write the output
     tab = pd.DataFrame({

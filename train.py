@@ -85,7 +85,7 @@ def main(args):
     train_loader = DeepMLDataLoader(
         dataset,
         batch_size=args.batch_size,
-        n_targets=3
+        n_targets=args.n_targets
     )
 
     valid_loader = DataLoader(
@@ -97,6 +97,23 @@ def main(args):
                 mean=model.base.mean,
                 std=model.base.std,
                 ttype='valid'
+            )
+        ),
+        batch_size=args.batch_size,
+        shuffle=False,
+        num_workers=args.workers,
+        pin_memory=gpu_id >= 0
+    )
+
+    test_loader = DataLoader(
+        data.get_dataset(
+            ttype='test',
+            inverted=inverted,
+            transform=libs.get_data_augmentation(
+                img_size=args.img_size,
+                mean=model.base.mean,
+                std=model.base.std,
+                ttype='test'
             )
         ),
         batch_size=args.batch_size,
@@ -130,7 +147,7 @@ def main(args):
     args.print_freq = max(1, len(train_loader) // 5)
 
     # train the model
-    libs.train(train_loader, valid_loader, model,
+    libs.train(train_loader, valid_loader, test_loader, model,
                criterion, optimizer, scheduler, args)
 
 
@@ -154,6 +171,8 @@ if __name__ == "__main__":
                         ' (default: ContrastiveLoss)')
     parser.add_argument('-img_size', default=227, type=int,
                         help='image shape (default: 227)')
+    parser.add_argument('-n_targets', default=3, type=int,
+                        help='number of targets (default: 3)')
     parser.add_argument('-j', '--workers', default=8, type=int, metavar='N',
                         help='number of data loading workers (default: 8)')
     parser.add_argument('--epochs', default=200, type=int, metavar='N',
