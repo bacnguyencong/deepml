@@ -82,6 +82,7 @@ def train(train_loader, val_loader, test_loader, model, criterion, optimizer, sc
     losses, acces = list(), list()
     best_acc = -np.inf
     topk = ([1, 5])
+    tests = list()
 
     for epoch in range(args.start_epoch, args.epochs):
 
@@ -121,6 +122,7 @@ def train(train_loader, val_loader, test_loader, model, criterion, optimizer, sc
 
         acc = validate(test_loader, model, args, topk)
         print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (acc[0], acc[1]))
+        tests.append(acc)
 
     # write the output
     tab = pd.DataFrame({
@@ -129,7 +131,12 @@ def train(train_loader, val_loader, test_loader, model, criterion, optimizer, sc
     })
     acces = np.vstack(acces)
     for i, k in enumerate(topk):
-        tab['recall_at_{}'.format(k)] = acces[:, i]
+        tab['train_recall_at_{}'.format(k)] = acces[:, i]
+
+    tests = np.vstack(tests)
+    for i, k in enumerate(topk):
+        tab['test_recall_at_{}'.format(k)] = tests[:, i]
+
     tab.to_csv(os.path.join('output', 'train_track.csv'), index=False)
 
 
