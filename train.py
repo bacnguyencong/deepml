@@ -133,8 +133,8 @@ def main(args):
     """
     optimizer = torch.optim.Adam([
         {'params': base_params},
-        {'params': linear_params, 'lr': args.lr}
-    ], lr=args.lr*0.1, weight_decay=args.weight_decay)
+        {'params': linear_params, 'lr': args.lr * 10}
+    ], lr=args.lr, weight_decay=args.weight_decay)
 
     # Decay LR by a factor of 0.1 every 10 epochs
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
