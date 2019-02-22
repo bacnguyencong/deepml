@@ -127,10 +127,10 @@ def main(args):
     ignored_params = list(map(id, linear_params))
     base_params = filter(lambda p: id(p) not in ignored_params,
                          model.parameters())
-    """
+
     for param in base_params:
         param.requires_grad = False
-    """
+
     optimizer = torch.optim.Adam([
         {'params': base_params},
         {'params': linear_params, 'lr': args.lr * 10}
