@@ -81,16 +81,16 @@ def train(train_loader, val_loader, test_loader, model, criterion, optimizer, sc
     """
     losses, acces = list(), list()
     best_acc = -np.inf
-    topk = ([1, 2, 4])
+    topk = ([1, 5])
     tests = list()
 
     for epoch in range(args.start_epoch, args.epochs):
 
         # build the triplets
-        if epoch % 1 == 0:
-            print('Rebuiding the targets and triplets...')
-            X, y = compute_feature(val_loader, model, args)
-            train_loader.generate_batches(X, y)
+        # if epoch % 3 == 0:
+        print('Rebuiding the targets and triplets...')
+        X, y = compute_feature(val_loader, model, args)
+        train_loader.generate_batches(X, y)
 
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
