@@ -62,10 +62,10 @@ def main(args):
             )
         ),
         batch_size=args.batch_size,
-        shuffle=True,
+        shuffle=False,
         n_targets=args.n_targets,
         num_workers=args.workers,
-        pin_memory=gpu_id >= 0
+        pin_memory=False
     )
     # create valid loader
     valid_loader = DataLoader(

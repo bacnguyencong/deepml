@@ -25,6 +25,10 @@ class Cub(Dataset):
             'valid': df[(90 < df['label']) & (df['label'] <= 100)].reset_index(drop=True),
             'test': df[df['label'] > 100].reset_index(drop=True)
         }
+
+        print('Cub_200_2011: train={}, valid={}, test={}'.format(
+            len(data_df['train']), len(data_df['valid']), len(data_df['test'])
+        ))
         # check if data were loaded correctly
         assert len(data_df['train']) + len(data_df['valid']
                                            ) == 5864 and len(data_df['test']) == 5924
