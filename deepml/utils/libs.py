@@ -144,7 +144,7 @@ def train(train_loader,
     # --------------------------------------------------------------------#
     # write the output
     tab = pd.DataFrame({
-        'epoch': range(args.start_epoch + 1, args.epochs + 1),
+        'epoch': range(args.start_epoch + 1, epoch + 1),
         'loss': np.array(losses)
     })
     # write the valid results
