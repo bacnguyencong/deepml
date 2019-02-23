@@ -62,7 +62,7 @@ def main(args):
             )
         ),
         batch_size=args.batch_size,
-        shuffle=False,
+        shuffle=True,
         n_targets=args.n_targets,
         num_workers=args.workers,
         pin_memory=False  # should be False to avoid problem
