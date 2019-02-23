@@ -8,6 +8,7 @@ import torch
 from torchvision import transforms
 
 from ..evals import nmi_clustering, recall_at_k
+from .early_stopping import EarlyStopping
 
 
 class AverageMeter(object):
@@ -68,12 +69,19 @@ def compute_feature(data_loader, model, args):
     return np.vstack(features), np.vstack(labels)
 
 
-def train(train_loader, val_loader, test_loader, model, criterion, optimizer, scheduler, args):
+def train(train_loader,
+          val_loader,
+          test_loader,
+          model, criterion,
+          optimizer,
+          scheduler,
+          args):
     """Train the model.
 
     Args:
         train_loader (DataLoader): The training data loader.
         val_loader (DataLoader): The validation data loader.
+        test_loader (DataLoader): The test data loader.
         model (CNNs): The model.
         criterion (Loss): The loss function.
         optimizer (Optimizer): The optimizer.
@@ -84,12 +92,14 @@ def train(train_loader, val_loader, test_loader, model, criterion, optimizer, sc
     topk = ([1, 5])
     tests = list()
 
+    # setup early stopping
+    early_stop = EarlyStopping(mode='max', patience=10)
+
     for epoch in range(args.start_epoch, args.epochs):
 
         # build the triplets
-        # if epoch % 3 == 0:
         print('Rebuiding the targets and triplets...')
-        X, y = compute_feature(val_loader, model, args)
+        X, y = compute_feature(train_loader.standard_loader, model, args)
         train_loader.generate_batches(X, y)
 
         # run an epoch
@@ -121,24 +131,35 @@ def train(train_loader, val_loader, test_loader, model, criterion, optimizer, sc
         # adjust the learning rate
         scheduler.step(acc[0])
 
-        acc = validate(test_loader, model, args, topk)
-        print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (acc[0], acc[1]))
-        tests.append(acc)
+        # early stopping
+        if early_stop.step(acc[0]):
+            print('Early stopping reached! Stop running...')
+            break
 
+        if test_loader is not None:
+            acc = validate(test_loader, model, args, topk)
+            print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (acc[0], acc[1]))
+            tests.append(acc)
+
+    # --------------------------------------------------------------------#
     # write the output
     tab = pd.DataFrame({
         'epoch': range(args.start_epoch + 1, args.epochs + 1),
         'loss': np.array(losses)
     })
+    # write the valid results
     acces = np.vstack(acces)
     for i, k in enumerate(topk):
         tab['train_recall_at_{}'.format(k)] = acces[:, i]
 
-    tests = np.vstack(tests)
-    for i, k in enumerate(topk):
-        tab['test_recall_at_{}'.format(k)] = tests[:, i]
+    # write the test results
+    if test_loader is not None:
+        tests = np.vstack(tests)
+        for i, k in enumerate(topk):
+            tab['test_recall_at_{}'.format(k)] = tests[:, i]
 
     tab.to_csv(os.path.join('output', 'train_track.csv'), index=False)
+    # --------------------------------------------------------------------#
 
 
 def run_epoch(train_loader, model, criterion, optimizer, epoch, args):

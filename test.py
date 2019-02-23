@@ -2,11 +2,11 @@ import argparse
 import os
 import random
 
-import pretrainedmodels
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
 
+import pretrainedmodels
 from deepml import datasets
 from deepml.models import CNNs
 from deepml.utils import libs

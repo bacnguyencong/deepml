@@ -1,14 +1,15 @@
+import os
+
 import numpy as np
 import torch
-import os
-# from deepml.models import CNNs
-
-from deepml.utils import libs
+from PIL import Image
 from torch.utils.data import DataLoader
 
-from deepml.datasets import Stanford, Cub
-from deepml.utils import RandomIdentitySampler
-from PIL import Image
+from deepml.datasets import Cub, Stanford
+from deepml.utils import RandomIdentitySampler, libs
+
+# from deepml.models import CNNs
+
 
 """
 model = CNNs(out_dim=12, arch='bninception')
@@ -21,7 +22,7 @@ data_path = os.path.abspath('./data/stanford')
 data_path = os.path.abspath('./data/cub_200_2011')
 data = Cub(data_path)
 
-dloader = data.get_dataloader(
+dloader = data.get_dataset(
     ttype='train',
     inverted=False,
     transform=libs.get_data_augmentation(
@@ -34,10 +35,8 @@ dloader = data.get_dataloader(
 sampler = RandomIdentitySampler(dloader, 8)
 train_loader = DataLoader(
     dloader,
-    sampler=sampler,
     batch_size=128,
     drop_last=True,
-    # shuffle=True,
     num_workers=1,
     pin_memory=0
 )

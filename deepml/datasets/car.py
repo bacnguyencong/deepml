@@ -1,6 +1,7 @@
 import os
-import scipy.io
+
 import pandas as pd
+import scipy.io
 
 from .dataset import Dataset
 

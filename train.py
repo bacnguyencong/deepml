@@ -2,18 +2,16 @@ import argparse
 import os
 import random
 
-import pretrainedmodels
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
 
 import deepml
+import pretrainedmodels
 from deepml import datasets, losses
+from deepml.datasets.loader import DeepMLDataLoader
 from deepml.models import CNNs
 from deepml.utils import libs
-from deepml.utils import RandomIdentitySampler
-
-from deepml.datasets.loader import DeepMLDataLoader
 
 # list of data paths
 DATA_PATHS = {
@@ -49,11 +47,10 @@ def main(args):
     # setup data set
     data_path = os.path.abspath(DATA_PATHS[args.data])
     data = datasets.__dict__[args.data](data_path)
-
     inverted = (model.base.input_space == 'BGR')
-    # sampler = RandomIdentitySampler(dloader, 8)
-    """
-    train_loader = DataLoader(
+
+    # create train loader
+    train_loader = DeepMLDataLoader(
         data.get_dataset(
             ttype='train',
             inverted=inverted,
@@ -65,29 +62,12 @@ def main(args):
             )
         ),
         batch_size=args.batch_size,
-        drop_last=True,
         shuffle=True,
+        n_targets=args.n_targets,
         num_workers=args.workers,
         pin_memory=gpu_id >= 0
     )
-    """
-    dataset = data.get_dataset(
-        ttype='train',
-        inverted=inverted,
-        transform=libs.get_data_augmentation(
-            img_size=args.img_size,
-            mean=model.base.mean,
-            std=model.base.std,
-            ttype='train'
-        )
-    )
-
-    train_loader = DeepMLDataLoader(
-        dataset,
-        batch_size=args.batch_size,
-        n_targets=args.n_targets
-    )
-
+    # create valid loader
     valid_loader = DataLoader(
         data.get_dataset(
             ttype='valid',
@@ -104,7 +84,7 @@ def main(args):
         num_workers=args.workers,
         pin_memory=gpu_id >= 0
     )
-
+    # create test loader
     test_loader = DataLoader(
         data.get_dataset(
             ttype='test',
@@ -127,10 +107,7 @@ def main(args):
     ignored_params = list(map(id, linear_params))
     base_params = filter(lambda p: id(p) not in ignored_params,
                          model.parameters())
-    """
-    for param in base_params:
-        param.requires_grad = False
-    """
+
     optimizer = torch.optim.Adam([
         {'params': base_params},
         {'params': linear_params, 'lr': args.lr * 10}
@@ -139,12 +116,10 @@ def main(args):
     # Decay LR by a factor of 0.1 every 10 epochs
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, 'max', factor=0.5, patience=5)
-    # scheduler = torch.optim.lr_scheduler.StepLR(
-    #   optimizer, step_size=10, gamma=0.1)
 
     # setup device and print frequency
     args.device = device
-    args.print_freq = 10  # max(1, len(train_loader) // 5)
+    args.print_freq = 10
 
     # train the model
     libs.train(train_loader, valid_loader, test_loader, model,

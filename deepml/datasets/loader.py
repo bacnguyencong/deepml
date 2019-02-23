@@ -1,12 +1,13 @@
 
-from PIL import Image
-from torch.utils.data import Dataset
 from collections import defaultdict
-from sklearn.cluster import KMeans
+
 import numpy as np
 import numpy.matlib as matl
 import torch
+from PIL import Image
+from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances
+from torch.utils.data import DataLoader, Dataset
 
 
 def _generate_triplet(inds, tars, imps):
@@ -104,11 +105,19 @@ def _check_batches(batches, X, y):
 
 class DeepMLDataLoader(object):
 
-    def __init__(self, dataset, batch_size=128, n_targets=3):
+    def __init__(self, dataset, batch_size=128, shuffle=False, n_targets=3,
+                 num_workers=8, pin_memory=False):
         self.batch_size = batch_size
         self.n_targets = n_targets
         self.dataset = dataset
         self.batches = None
+        self.standard_loader = DataLoader(
+            dataset,
+            batch_size=batch_size,
+            shuffle=shuffle,
+            num_workers=num_workers,
+            pin_memory=pin_memory
+        )
 
     def generate_batches(self, X, y):
         self.batches = build_batches(X, y, self.n_targets, self.batch_size)
