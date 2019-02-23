@@ -128,6 +128,11 @@ def train(train_loader,
         print('Loss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
               (loss, acc[0], acc[1]))
 
+        if test_loader is not None:
+            acc = validate(test_loader, model, args, topk)
+            print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (acc[0], acc[1]))
+            tests.append(acc)
+
         # adjust the learning rate
         scheduler.step(acc[0])
 
@@ -135,11 +140,6 @@ def train(train_loader,
         if early_stop.step(acc[0]):
             print('Early stopping reached! Stop running...')
             break
-
-        if test_loader is not None:
-            acc = validate(test_loader, model, args, topk)
-            print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (acc[0], acc[1]))
-            tests.append(acc)
 
     # --------------------------------------------------------------------#
     # write the output
