@@ -46,14 +46,18 @@ def build_triplets(X, y, n_target=3):
         targets = np.where(label == y)[0]
         imposters = np.where(label != y)[0]
         # remove group of examples with a few targets or no imposters
-        if len(targets) > n_target and len(imposters) > 0:
+        if len(targets) > 1 and len(imposters) > 0:
             # compute the targets
+            true_n_targets = min(n_target, len(targets) - 1)
             index = np.argsort(dist[targets, :][:, targets], axis=0)[
-                0:n_target]
+                0:true_n_targets]
             Triplets.append(_generate_triplet(
                 targets, targets[index], imposters))
+
+    # if set of triplet is not empty
     if len(Triplets) > 0:
         Triplets = np.hstack(Triplets)
+
     return Triplets
 
 

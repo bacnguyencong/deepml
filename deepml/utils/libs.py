@@ -93,7 +93,7 @@ def train(train_loader,
     tests = list()
 
     # setup early stopping
-    early_stop = EarlyStopping(mode='max', patience=10)
+    early_stop = EarlyStopping(mode='max', patience=15)
 
     for epoch in range(args.start_epoch, args.epochs):
 

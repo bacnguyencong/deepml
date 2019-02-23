@@ -65,7 +65,7 @@ def main(args):
         shuffle=False,
         n_targets=args.n_targets,
         num_workers=args.workers,
-        pin_memory=False
+        pin_memory=False  # should be False to avoid problem
     )
     # create valid loader
     valid_loader = DataLoader(
@@ -115,7 +115,7 @@ def main(args):
 
     # Decay LR by a factor of 0.1 every 10 epochs
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, 'max', factor=0.5, patience=5)
+        optimizer, 'max', factor=0.5, patience=5, verbose=True)
 
     # setup device and print frequency
     args.device = device
