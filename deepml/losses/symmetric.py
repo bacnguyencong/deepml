@@ -1,22 +1,34 @@
 import torch
 import torch.nn as nn
 
+from ..utils.libs import build_triplets
+
 
 class SymTripLoss(nn.Module):
     """Implement the symmetric loss
 
     Args:
-        margin (float, optional): The loss margin. Defaults to 0.5.
-
+        margin (float, optional): The loss margin.
     .. bac:
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, n_targets, **kwargs):
         super(SymTripLoss, self).__init__()
+        self.n_targets = n_targets
 
     def forward(self, inputs, targets, *args):
-        T = args[0]
+        # compute the triplets
+        T = build_triplets(
+            X=inputs.cpu().detach().numpy(),
+            y=targets.cpu().detach().numpy(),
+            n_target=self.n_targets
+        )
+        # number of triplets
         n = T.shape[1]
+
+        if n == 0:
+            return torch.zeros(1, requires_grad=True)
+
         maxBlocks = 100
         loss = list()  # total loss
 
