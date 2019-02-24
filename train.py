@@ -43,7 +43,7 @@ def main(args):
     ).to(device)
 
     # setup loss function
-    criterion = losses.__dict__[args.loss](args.n_targets)
+    criterion = losses.__dict__[args.loss](args.n_targets, verbose=True)
     # setup data set
     data_path = os.path.abspath(DATA_PATHS[args.data])
     data = datasets.__dict__[args.data](data_path)

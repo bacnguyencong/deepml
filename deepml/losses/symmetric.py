@@ -12,14 +12,16 @@ class SymTripLoss(nn.Module):
     .. bac:
     """
 
-    def __init__(self, n_targets, **kwargs):
+    def __init__(self, n_targets, verbose=False, **kwargs):
         super(SymTripLoss, self).__init__()
         self.n_targets = n_targets
+        self.verbose = verbose
 
     def forward(self, inputs, targets, *args):
         if len(args) == 0:
             # compute the triplets
-            print('Online computing triplets')
+            if self.verbose:
+                print('Online computing triplets')
             T = build_triplets(
                 X=inputs.cpu().detach().numpy(),
                 y=targets.cpu().detach().numpy(),
@@ -30,9 +32,9 @@ class SymTripLoss(nn.Module):
 
         if len(T) == 0:
             return torch.zeros(1, requires_grad=True)
-        # debug
-        # _check_triplets(T, inputs.cpu().detach().numpy(),
-        #               targets.cpu().detach().numpy())
+        if self.verbose:
+            _check_triplets(T, inputs.cpu().detach().numpy(),
+                            targets.cpu().detach().numpy())
         # block size
         maxBlocks = 500
         n = T.shape[1]
