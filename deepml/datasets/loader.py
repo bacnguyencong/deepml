@@ -56,15 +56,14 @@ class DeepMLDataLoader(object):
     def __iter__(self):
         """Returns a generator containing inputs, targets."""
         for batch in self.batches:
-            yield next(
-                DataLoader(
-                    self.dataset,
-                    batch_size=self.batch_size,
-                    sampler=FixSampler(self.dataset, batch),
-                    num_workers=self.num_workers,
-                    pin_memory=self.pin_memory
-                )
-            )
+            yield next(iter(DataLoader(
+                self.dataset,
+                batch_size=self.batch_size,
+                sampler=FixSampler(self.dataset, batch),
+                num_workers=self.num_workers,
+                pin_memory=self.pin_memory
+            )))
+
             """
             inputs, targets = [], []
             for i in batch:
