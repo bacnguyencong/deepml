@@ -10,10 +10,9 @@ from torch.utils.data import DataLoader, Dataset
 
 class DeepMLDataLoader(object):
 
-    def __init__(self, dataset, batch_size=128, shuffle=False, n_targets=3,
+    def __init__(self, dataset, batch_size=128, shuffle=False,
                  num_workers=8, pin_memory=False):
         self.batch_size = batch_size
-        self.n_targets = n_targets
         self.dataset = dataset
         self.batches = None
         self.standard_loader = DataLoader(

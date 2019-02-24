@@ -43,7 +43,7 @@ def main(args):
     ).to(device)
 
     # setup loss function
-    criterion = losses.__dict__[args.loss]()
+    criterion = losses.__dict__[args.loss](args.n_targets)
     # setup data set
     data_path = os.path.abspath(DATA_PATHS[args.data])
     data = datasets.__dict__[args.data](data_path)
@@ -63,7 +63,6 @@ def main(args):
         ),
         batch_size=args.batch_size,
         shuffle=False,  # must be False to avoid problem
-        n_targets=args.n_targets,
         num_workers=args.workers,
         pin_memory=gpu_id >= 0
     )
