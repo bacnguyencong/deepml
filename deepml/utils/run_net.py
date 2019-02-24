@@ -36,6 +36,7 @@ def train(train_loader,
         # Rebuiding mini-batchs
         X, y = compute_feature(train_loader.standard_loader, model, args)
         train_loader.generate_batches(X, y)
+        print('Recomputed batches...')
 
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
