@@ -75,8 +75,10 @@ def build_triplets(X, y, n_target=3):
     return Triplets
 
 
-def check_triplets(T, X, y):
-    assert T.shape[1] == len(np.unique(T, axis=1))
+def _check_triplets(T, X, y):
+    if T.shape[1] != len(np.unique(T, axis=1)):
+        print(T.shape[1], len(np.unique(T, axis=1)))
+
     for t in range(T.shape[1]):
         i, j, k = T[:, t]
         assert(y[i] == y[j] and y[i] != y[k])
