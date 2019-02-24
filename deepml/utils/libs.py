@@ -96,7 +96,6 @@ def train(train_loader,
     early_stop = EarlyStopping(mode='max', patience=15)
 
     for epoch in range(args.start_epoch, args.epochs):
-
         # build the triplets
         print('Rebuiding the targets and triplets...')
         X, y = compute_feature(train_loader.standard_loader, model, args)
@@ -129,9 +128,9 @@ def train(train_loader,
               (loss, acc[0], acc[1]))
 
         if test_loader is not None:
-            acc = validate(test_loader, model, args, topk)
-            print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (acc[0], acc[1]))
-            tests.append(acc)
+            t_acc = validate(test_loader, model, args, topk)
+            print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (t_acc[0], t_acc[1]))
+            tests.append(t_acc)
 
         # adjust the learning rate
         scheduler.step(acc[0])
@@ -144,7 +143,7 @@ def train(train_loader,
     # --------------------------------------------------------------------#
     # write the output
     tab = pd.DataFrame({
-        'epoch': range(args.start_epoch + 1, epoch + 1),
+        'epoch': range(1, len(losses) + 1),
         'loss': np.array(losses)
     })
     # write the valid results
