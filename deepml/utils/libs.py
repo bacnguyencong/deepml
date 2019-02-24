@@ -152,8 +152,8 @@ def get_data_augmentation(img_size, mean, std, ttype):
         return transforms.Compose([
             transforms.Resize((256, 256)),
             transforms.RandomHorizontalFlip(),
-            transforms.RandomCrop((img_size, img_size)),
-            # transforms.RandomResizedCrop(scale=(0.16, 1), size=img_size),
+            #transforms.RandomCrop((img_size, img_size)),
+            transforms.RandomResizedCrop(scale=(0.16, 1), size=img_size),
             transforms.ToTensor(),
             normalize
         ])
