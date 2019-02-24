@@ -2,16 +2,16 @@ import argparse
 import os
 import random
 
-import pretrainedmodels
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
 
 import deepml
+import pretrainedmodels
 from deepml import datasets, losses
 from deepml.datasets.loader import DeepMLDataLoader
 from deepml.models import CNNs
-from deepml.utils import libs, runner
+from deepml.utils import libs
 
 # list of data paths
 DATA_PATHS = {
@@ -43,7 +43,7 @@ def main(args):
     ).to(device)
 
     # setup loss function
-    criterion = losses.__dict__[args.loss](args.n_targets, verbose=False)
+    criterion = losses.__dict__[args.loss]()
     # setup data set
     data_path = os.path.abspath(DATA_PATHS[args.data])
     data = datasets.__dict__[args.data](data_path)
@@ -122,8 +122,8 @@ def main(args):
     args.print_freq = 10
 
     # train the model
-    runner.train(train_loader, valid_loader, test_loader, model,
-                 criterion, optimizer, scheduler, args)
+    libs.train(train_loader, valid_loader, test_loader, model,
+               criterion, optimizer, scheduler, args)
 
 
 if __name__ == "__main__":

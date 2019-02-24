@@ -5,20 +5,6 @@ import torch
 from torch.utils.data.sampler import Sampler
 
 
-class FixSampler(Sampler):
-    """Sample the same number of examples from each class."""
-
-    def __init__(self, data_source, sample_order):
-        self.data_source = data_source
-        self.sample_order = sample_order
-
-    def __len__(self):
-        return len(self.sample_order)
-
-    def __iter__(self):
-        return iter(self.sample_order)
-
-
 class RandomIdentitySampler(Sampler):
     """Sample the same number of examples from each class."""
 
