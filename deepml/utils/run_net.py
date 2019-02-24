@@ -33,8 +33,7 @@ def train(train_loader,
     early_stop = EarlyStopping(mode='max', patience=15)
 
     for epoch in range(args.start_epoch, args.epochs):
-        # build the triplets
-        print('Rebuiding the targets and triplets...')
+        # Rebuiding mini-batchs
         X, y = compute_feature(train_loader.standard_loader, model, args)
         train_loader.generate_batches(X, y)
 

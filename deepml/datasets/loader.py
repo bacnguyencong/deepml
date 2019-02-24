@@ -6,6 +6,7 @@ import torch
 from PIL import Image
 from sklearn.cluster import KMeans
 from torch.utils.data import DataLoader, Dataset
+from ..utils.sampler import FixSampler
 
 
 class DeepMLDataLoader(object):
@@ -15,6 +16,8 @@ class DeepMLDataLoader(object):
         self.batch_size = batch_size
         self.dataset = dataset
         self.batches = None
+        self.num_workers = num_workers
+        self.pin_memory = pin_memory
         self.standard_loader = DataLoader(
             dataset,
             batch_size=batch_size,
@@ -53,12 +56,23 @@ class DeepMLDataLoader(object):
     def __iter__(self):
         """Returns a generator containing inputs, targets."""
         for batch in self.batches:
+            yield next(
+                DataLoader(
+                    self.dataset,
+                    batch_size=self.batch_size,
+                    sampler=FixSampler(self.dataset, batch),
+                    num_workers=self.num_workers,
+                    pin_memory=self.pin_memory
+                )
+            )
+            """
             inputs, targets = [], []
             for i in batch:
                 inputs.append(self.dataset[i][0])
                 targets.append(self.dataset[i][1])
             targets = torch.from_numpy(np.array(targets).reshape(-1, 1))
             yield (torch.stack(inputs), targets)
+            """
 
     def __len__(self):
         return 0 if self.batches is None else len(self.batches)
