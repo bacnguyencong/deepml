@@ -11,7 +11,7 @@ import pretrainedmodels
 from deepml import datasets, losses
 from deepml.datasets.loader import DeepMLDataLoader
 from deepml.models import CNNs
-from deepml.utils import libs
+from deepml.utils import libs, runner
 
 # list of data paths
 DATA_PATHS = {
@@ -49,6 +49,16 @@ def main(args):
     data = datasets.__dict__[args.data](data_path)
     inverted = (model.base.input_space == 'BGR')
 
+    temp_data = data.get_dataset(
+        ttype='train',
+        inverted=inverted,
+        transform=libs.get_data_augmentation(
+            img_size=args.img_size,
+            mean=model.base.mean,
+            std=model.base.std,
+            ttype='test'
+        )
+    )
     # create train loader
     train_loader = DeepMLDataLoader(
         data.get_dataset(
@@ -61,6 +71,7 @@ def main(args):
                 ttype='train'
             )
         ),
+        temp_data,
         batch_size=args.batch_size,
         shuffle=False,  # must be False to avoid problem
         n_targets=args.n_targets,
@@ -122,8 +133,8 @@ def main(args):
     args.print_freq = 10
 
     # train the model
-    libs.train(train_loader, valid_loader, test_loader, model,
-               criterion, optimizer, scheduler, args)
+    runner.train(train_loader, valid_loader, test_loader, model,
+                 criterion, optimizer, scheduler, args)
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 import pretrainedmodels
 from deepml import datasets
 from deepml.models import CNNs
-from deepml.utils import libs
+from deepml.utils import libs, runner
 
 # list of data paths
 DATA_PATHS = {
@@ -74,10 +74,10 @@ def main(args):
     )
 
     args.device = device
-    args.print_freq = len(test_loader) // 5
+    args.print_freq = 10
 
     # test the model
-    libs.test(test_loader, model, args)
+    runner.test(test_loader, model, args)
 
 
 if __name__ == "__main__":

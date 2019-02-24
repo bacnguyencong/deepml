@@ -109,14 +109,14 @@ def _check_batches(batches, X, y):
 
 class DeepMLDataLoader(object):
 
-    def __init__(self, dataset, batch_size=128, shuffle=False, n_targets=3,
-                 num_workers=8, pin_memory=False):
+    def __init__(self, dataset, temp_data, batch_size=128, shuffle=False,
+                 n_targets=3, num_workers=8, pin_memory=False):
         self.batch_size = batch_size
         self.n_targets = n_targets
         self.dataset = dataset
         self.batches = None
         self.standard_loader = DataLoader(
-            dataset,
+            temp_data,
             batch_size=batch_size,
             shuffle=shuffle,
             num_workers=num_workers,
