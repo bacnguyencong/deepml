@@ -71,7 +71,7 @@ class DeepMLDataLoader(object):
                 inputs.append(self.dataset[i][0])
                 targets.append(self.dataset[i][1])
             targets = torch.from_numpy(np.array(targets).reshape(-1, 1))
-            yield (torch.stack(inputs), targets)
+            yield (torch.stack(inputs), targets, batch[1])
 
     def __len__(self):
         return 0 if self.batches is None else len(self.batches)
