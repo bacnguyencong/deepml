@@ -54,7 +54,7 @@ class DeepMLDataLoader(object):
         """Returns a generator containing inputs, targets."""
         for batch in self.batches:
             inputs, targets = [], []
-            for i in batch[0]:
+            for i in batch:
                 inputs.append(self.dataset[i][0])
                 targets.append(self.dataset[i][1])
             targets = torch.from_numpy(np.array(targets).reshape(-1, 1))
