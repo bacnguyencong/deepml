@@ -55,7 +55,7 @@ class DeepMLDataLoader(object):
                 index = np.random.choice(index, self.batch_size, replace=False)
             if offline:
                 triplets = build_triplets(
-                    X[index], y[index], n_target=self.n_targets)
+                    X[index], y[index], n_targets=self.n_targets)
 
             if len(triplets) > 0:
                 self.batches.append((index, triplets))
