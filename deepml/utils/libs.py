@@ -62,7 +62,7 @@ def build_triplets(X, y, n_targets=3):
         # remove group of examples with a few targets or no imposters
         if len(targets) > 1 and len(imposters) > 0:
             # compute the targets
-            true_n_targets = min(n_target, len(targets) - 1)
+            true_n_targets = min(n_targets, len(targets) - 1)
             index = np.argsort(dist[targets, :][:, targets], axis=0)[
                 0:true_n_targets]
             Triplets.append(_generate_triplet(
