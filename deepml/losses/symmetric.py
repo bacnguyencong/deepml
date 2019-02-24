@@ -17,23 +17,28 @@ class SymTripLoss(nn.Module):
         self.n_targets = n_targets
 
     def forward(self, inputs, targets, *args):
-        # compute the triplets
-        T = build_triplets(
-            X=inputs.cpu().detach().numpy(),
-            y=targets.cpu().detach().numpy(),
-            n_target=self.n_targets
-        )
+        if len(args) == 0:
+            # compute the triplets
+            print('Online computing triplets')
+            T = build_triplets(
+                X=inputs.cpu().detach().numpy(),
+                y=targets.cpu().detach().numpy(),
+                n_targets=self.n_targets
+            )
+        else:
+            T = args[0]
 
         if len(T) == 0:
             return torch.zeros(1, requires_grad=True)
         # debug
-        _check_triplets(T, inputs.cpu().detach().numpy(),
-                        targets.cpu().detach().numpy())
+        # _check_triplets(T, inputs.cpu().detach().numpy(),
+        #               targets.cpu().detach().numpy())
         # block size
-        maxBlocks = 100
+        maxBlocks = 500
+        n = T.shape[1]
         loss = list()  # total loss
-        for i in range(0, T.shape[1], maxBlocks):
-            addBlocks = min(maxBlocks, T.shape[1] - i)
+        for i in range(0, n, maxBlocks):
+            addBlocks = min(maxBlocks, n - i)
             ancs = inputs[T[0][i:i+addBlocks]]
             tars = inputs[T[1][i:i+addBlocks]]
             imps = inputs[T[2][i:i+addBlocks]]
@@ -44,5 +49,4 @@ class SymTripLoss(nn.Module):
             out = torch.cat([-pos, -0.5*(neg_a + neg_b)], dim=1)
             logs = pos + torch.logsumexp(out, dim=1, keepdim=True)
             loss.append(torch.sum(logs, dim=0, keepdim=True))
-
-        return torch.sum(torch.cat(loss)) / T.shape[1]
+        return torch.sum(torch.cat(loss)) / n

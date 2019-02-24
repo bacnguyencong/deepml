@@ -120,7 +120,10 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
 
         # compute output
         output = model(input)
-        loss = criterion(output, target)
+        if len(data) > 2:
+            loss = criterion(output, target, data[2])
+        else:
+            loss = criterion(output, target)
 
         # measure accuracy and record loss
         losses.update(loss.item(), input.size(0))

@@ -41,7 +41,7 @@ def _generate_triplet(inds, tars, imps):
     return T
 
 
-def build_triplets(X, y, n_target=3):
+def build_triplets(X, y, n_targets=3):
     """Compute all triplet constraints.
 
     Args:

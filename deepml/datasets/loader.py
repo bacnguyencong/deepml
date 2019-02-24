@@ -6,16 +6,17 @@ import torch
 from PIL import Image
 from sklearn.cluster import KMeans
 from torch.utils.data import DataLoader, Dataset
-from ..utils.sampler import FixSampler
+from ..utils.libs import build_triplets
 
 
 class DeepMLDataLoader(object):
 
     def __init__(self, dataset, batch_size=128, shuffle=False,
-                 num_workers=8, pin_memory=False):
+                 n_targets=None, num_workers=8, pin_memory=False):
         self.batch_size = batch_size
         self.dataset = dataset
         self.batches = None
+        self.n_targets = n_targets
         self.num_workers = num_workers
         self.pin_memory = pin_memory
         self.standard_loader = DataLoader(
@@ -43,6 +44,8 @@ class DeepMLDataLoader(object):
         # compute the clusters using kmeans
         n_clusters = max(1, X.shape[0] // self.batch_size)
         model = KMeans(n_clusters=n_clusters).fit(X)
+        # if offline
+        offline = self.n_targets is not None
         # generate all triplet constraints
         self.batches = list()
         for label in np.unique(model.labels_):
@@ -50,7 +53,14 @@ class DeepMLDataLoader(object):
             # if the number of examples is larger than requires
             if len(index) > self.batch_size:
                 index = np.random.choice(index, self.batch_size, replace=False)
-            if len(index) > 0:
+            if offline:
+                triplets = build_triplets(
+                    X[index], y[index], n_target=self.n_targets)
+
+            if len(triplets) > 0:
+                self.batches.append((index, triplets))
+
+            if (not offline) and len(index) > 0:
                 self.batches.append(index)
 
     def __iter__(self):
