@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from ..utils.libs import build_triplets
+from ..utils.libs import build_triplets, check_triplets
 
 
 class SymTripLoss(nn.Module):
@@ -26,7 +26,9 @@ class SymTripLoss(nn.Module):
 
         if len(T) == 0:
             return torch.zeros(1, requires_grad=True)
-
+        # debug
+        check_triplets(T, inputs.cpu().detach().numpy(),
+                       targets.cpu().detach().numpy())
         # block size
         maxBlocks = 100
         loss = list()  # total loss

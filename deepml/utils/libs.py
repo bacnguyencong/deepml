@@ -34,12 +34,6 @@ def _generate_triplet(inds, tars, imps):
     k1 = tars.shape[0]
     k2 = imps.shape[0]
     n = inds.shape[0]
-    """ Check
-    for i in range(k1):
-        assert n == len(np.unique(np.hstack([inds, tars[i, :]])))
-    assert k2 == len(np.unique(imps))
-    assert n == len(np.unique(inds))
-    """
     T = np.zeros((3, n*k1*k2), dtype=np.int)
     T[0] = matl.repmat(inds.reshape(-1, 1), 1, k1 * k2).flatten()
     T[1] = matl.repmat(tars.T.flatten().reshape(-1, 1), 1, k2).flatten()
@@ -81,7 +75,8 @@ def build_triplets(X, y, n_target=3):
     return Triplets
 
 
-def _check_triplets(T, X, y):
+def check_triplets(T, X, y):
+    assert T.shape[1] == len(np.unique(T, axis=1))
     for t in range(T.shape[1]):
         i, j, k = T[:, t]
         assert(y[i] == y[j] and y[i] != y[k])
@@ -157,7 +152,8 @@ def get_data_augmentation(img_size, mean, std, ttype):
         return transforms.Compose([
             transforms.Resize((256, 256)),
             transforms.RandomHorizontalFlip(),
-            transforms.RandomResizedCrop(scale=(0.16, 1), size=img_size),
+            transforms.RandomCrop((img_size, img_size)),
+            # transforms.RandomResizedCrop(scale=(0.16, 1), size=img_size),
             transforms.ToTensor(),
             normalize
         ])
