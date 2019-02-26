@@ -30,6 +30,5 @@ class Cub(Dataset):
             len(data_df['train']), len(data_df['valid']), len(data_df['test'])
         ))
         # check if data were loaded correctly
-        assert len(data_df['train']) + len(data_df['valid']
-                                           ) == 5864 and len(data_df['test']) == 5924
+        assert len(data_df['train']) == 5864 and len(data_df['test']) == 5924
         return data_df
