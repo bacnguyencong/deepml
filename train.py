@@ -16,7 +16,7 @@ from deepml.utils import libs, runner
 # list of data paths
 DATA_PATHS = {
     'Cub': './data/cub_200_2011',
-    'Stand': './data/stanford',
+    'Stanford': './data/stanford',
     'Car': './data/cars196'
 }
 
