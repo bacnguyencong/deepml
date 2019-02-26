@@ -3,12 +3,12 @@ source activate deepml-env
 
 export CUDA_VISIBLE_DEVICES=2
 
-DATA='Cub'
+DATA='Stanford'
 ARCH='bninception'
 LOSS='SymTripLoss'
 
 LR=0.0001
-DIM=128         # embedded feature size
+DIM=512         # embedded feature size
 IMG_SIZE=224    # image size
 BATCH_SIZE=128  # batch size
 EPOCHS=200      # number of epochs
