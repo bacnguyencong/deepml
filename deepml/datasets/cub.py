@@ -22,7 +22,7 @@ class Cub(Dataset):
         # create a map
         data_df = {
             'train': df[df['label'] <= 90].reset_index(drop=True),
-            'valid': df[(90 < df['label']) & (df['label'] <= 100)].reset_index(drop=True),
+            'valid': df[df['label'] <= 90].reset_index(drop=True),
             'test': df[df['label'] > 100].reset_index(drop=True)
         }
 
