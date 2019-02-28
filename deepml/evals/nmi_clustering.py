@@ -22,7 +22,7 @@ def nmi_clustering(features, labels, n_cluster=None):
         n_jobs=-1,
         random_state=0
     ).fit(features)
-
+    print("Finished k-means")
     nmi = normalized_mutual_info_score(
         labels.flatten(),
         kmeans.labels_,
