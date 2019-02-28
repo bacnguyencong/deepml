@@ -3,12 +3,8 @@ import shutil
 from tqdm import tqdm
 
 import numpy as np
-import pandas as pd
 import torch
 from torchvision import transforms
-
-from ..evals import nmi_clustering, recall_at_k
-from .early_stopping import EarlyStopping
 
 
 class AverageMeter(object):

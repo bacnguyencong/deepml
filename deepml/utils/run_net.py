@@ -167,9 +167,10 @@ def test(test_loader, model, args):
     features, labels = compute_feature(test_loader, model, args)
     topk = np.arange(1, 101, 1)
     result = recall_at_k(features, labels, topk)
+    print('Recall@k is computed ...')
     recalls = pd.DataFrame({'k': topk, 'recall': result})
     nmi = nmi_clustering(features, labels)
-
+    print('NMI is computed ...')
     # write the recall@k results
     recalls.to_csv(os.path.join('output', 'test_recall.csv'), index=False)
     # write the clustering results
