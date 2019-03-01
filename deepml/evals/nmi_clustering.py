@@ -19,10 +19,10 @@ def nmi_clustering(features, labels, n_cluster=None):
     kmeans = KMeans(
         n_clusters=n_cluster,
         n_init=20,
-        n_jobs=-1,
+        n_jobs=10,
         random_state=0
     ).fit(features)
-    print("Finished k-means")
+    print("Finished k-means...")
     nmi = normalized_mutual_info_score(
         labels.flatten(),
         kmeans.labels_,
