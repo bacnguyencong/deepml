@@ -19,7 +19,7 @@ def nmi_clustering(features, labels, n_cluster=None):
     kmeans = KMeans(
         n_clusters=n_cluster,
         n_init=20,
-        n_jobs=10,
+        n_jobs=-1,
         random_state=0
     ).fit(features)
     print("Finished k-means...")

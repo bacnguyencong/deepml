@@ -83,7 +83,7 @@ def build_batches(X, y, n_target=3, batch_size=128):
     assert len(X) == len(y)
     # compute the clusters using kmeans
     n_clusters = max(1, X.shape[0] // batch_size)
-    model = KMeans(n_clusters=n_clusters).fit(X)
+    model = KMeans(n_clusters=n_clusters, n_jobs=-1).fit(X)
 
     # generate all triplet constraints
     batches = list()
