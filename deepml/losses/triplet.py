@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 
+from ..utils import libs
+
 
 class TripletLoss(nn.Module):
     """Implement the triplet loss function [bac]_.
@@ -11,12 +13,19 @@ class TripletLoss(nn.Module):
     .. bac:
     """
 
-    def __init__(self, margin=0.2, **kwargs):
+    def __init__(self, margin=0.2, n_targets=5, **kwargs):
         super(TripletLoss, self).__init__()
         self.margin = margin
+        self.n_targets = n_targets
 
     def forward(self, inputs, targets, *args):
-        T = args[0]
+        T = libs.build_triplets(
+            inputs.cpu().detach().numpy(),
+            targets.cpu().detach().numpy(),
+            n_target=self.n_targets
+        )
+        if len(T) == 0:
+            return torch.zeros(1, requires_grad=True)
         n = T.shape[1]
         maxBlocks = 100
         loss = list()  # total loss

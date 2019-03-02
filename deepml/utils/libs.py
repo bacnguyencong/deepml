@@ -5,6 +5,8 @@ from tqdm import tqdm
 import numpy as np
 import torch
 from torchvision import transforms
+import numpy.matlib as matl
+from sklearn.metrics import pairwise_distances
 
 
 class AverageMeter(object):
@@ -24,14 +26,6 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
-
-
-def adjust_learning_rate(optimizer, epoch, args):
-    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs.
-    """
-    lr = args.lr * (0.1 ** (epoch // 30))
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
 
 
 def compute_feature(data_loader, model, args):
@@ -107,3 +101,54 @@ def get_data_augmentation(img_size, mean, std, ttype):
         transforms.ToTensor(),
         normalize
     ])
+
+
+def _check_triplets(T, X, y):
+    for t in range(T.shape[1]):
+        i, j, k = T[:, t]
+        assert(y[i] == y[j] and y[i] != y[k])
+
+
+def _generate_triplet(inds, tars, imps):
+    k1 = tars.shape[0]
+    k2 = imps.shape[0]
+    n = inds.shape[0]
+    T = np.zeros((3, n*k1*k2), dtype=np.int)
+    T[0] = matl.repmat(inds.reshape(-1, 1), 1, k1 * k2).flatten()
+    T[1] = matl.repmat(tars.T.flatten().reshape(-1, 1), 1, k2).flatten()
+    T[2] = matl.repmat(imps.reshape(-1, 1), k1 * n, 1).flatten()
+    return T
+
+
+def build_triplets(X, y, n_target=3):
+    """Compute all triplet constraints.
+
+    Args:
+        X (np.array, shape = [n_samples, n_features]): The input data.
+        y (np.array, shape = (n_samples,) ): The labels.
+        n_target (int, optional): Defaults to 3. The number of targets.
+
+    Returns:
+        (np.array, shape = [3, n_triplets]): The triplet index
+    """
+    dist = pairwise_distances(X, X)
+    np.fill_diagonal(dist, np.inf)
+    # list of triplets
+    Triplets = list()
+    for label in np.unique(y):
+        targets = np.where(label == y)[0]
+        imposters = np.where(label != y)[0]
+        # remove group of examples with a few targets or no imposters
+        if len(targets) > 1 and len(imposters) > 0:
+            # compute the targets
+            true_n_targets = min(n_target, len(targets) - 1)
+            index = np.argsort(dist[targets, :][:, targets], axis=0)[
+                0:true_n_targets]
+            Triplets.append(_generate_triplet(
+                targets, targets[index], imposters))
+
+    # if set of triplet is not empty
+    if len(Triplets) > 0:
+        Triplets = np.hstack(Triplets)
+
+    return Triplets
