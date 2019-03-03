@@ -138,7 +138,7 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
 
         if i % args.print_freq == 0:
             print('Epoch: [{0}][{1}/{2}]\t'
-                  'time {}\t'
+                  'time {3}\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
                       epoch, i, len(train_loader), time.time() - end,
                       loss=losses))
