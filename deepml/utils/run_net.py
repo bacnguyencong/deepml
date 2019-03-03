@@ -1,4 +1,5 @@
 import os
+import time
 import numpy as np
 import pandas as pd
 from ..evals import nmi_clustering, recall_at_k
@@ -35,8 +36,9 @@ def train(train_loader,
     for epoch in range(args.start_epoch, args.epochs):
         # Rebuiding mini-batchs
         X, y = compute_feature(train_loader.standard_loader, model, args)
+        end = time.time()
         train_loader.generate_batches(X, y)
-        print('Recomputed batches...')
+        print('Recomputed batches...%.8f' % (time.time() - end))
 
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
@@ -114,6 +116,7 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
     model.train()
 
     for i, data in enumerate(train_loader):
+        end = time.time()
         # place input tensors on the device
         input = data[0].to(args.device)
         target = data[1].to(args.device)
@@ -135,8 +138,9 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
 
         if i % args.print_freq == 0:
             print('Epoch: [{0}][{1}/{2}]\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
-                      epoch, i, len(train_loader), loss=losses))
+                  'Loss {loss.val:.4f} ({loss.avg:.4f}), time {}'.format(
+                      epoch, i, len(train_loader), loss=losses),
+                  time.time() - end)
     return losses.avg
 
 
