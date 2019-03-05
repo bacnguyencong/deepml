@@ -147,8 +147,6 @@ if __name__ == "__main__":
                         help='number of data loading workers (default: 8)')
     parser.add_argument('--epochs', default=150, type=int, metavar='N',
                         help='number of total epochs to run')
-    parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
-                        help='manual epoch number (useful on restarts)')
     parser.add_argument('--outdim', default=512, type=int, metavar='N',
                         help='number of features')
     parser.add_argument('-b', '--batch-size', default=256, type=int,

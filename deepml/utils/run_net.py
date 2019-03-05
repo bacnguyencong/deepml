@@ -34,7 +34,7 @@ def train(train_loader,
     # setup early stopping
     early_stop = EarlyStopping(mode='min', patience=15)
 
-    for epoch in range(args.start_epoch, args.epochs):
+    for epoch in range(0, args.epochs):
         # Rebuiding mini-batchs
         X, y = compute_feature(train_loader.standard_loader, model, args)
         end = time.time()
