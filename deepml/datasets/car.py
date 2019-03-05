@@ -19,7 +19,6 @@ class Car(Dataset):
         # create a map
         data_df = {
             'train': df[df['label'] <= 98].reset_index(),
-            'valid': df[df['label'] <= 98].reset_index(),
             'test': df[df['label'] > 98].reset_index()
         }
         # check if data were loaded correctly

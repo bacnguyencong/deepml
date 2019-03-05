@@ -22,7 +22,6 @@ class Stanford(Dataset):
         # create a map
         data_df = {
             'train': self.compute(root, 'Ebay_train.txt'),
-            'valid': self.compute(root, 'Ebay_train.txt'),
             'test': self.compute(root, 'Ebay_test.txt')
         }
         # check if data were loaded correctly

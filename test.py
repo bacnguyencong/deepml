@@ -13,10 +13,11 @@ from deepml.utils import libs, runner
 
 # list of data paths
 DATA_PATHS = {
-    'Cub': '/home/data/bncong/Desktop/deepml/data/cub_200_2011',
-    'Stanford': '/home/data/bncong/Desktop/deepml/data/stanford',
-    'Car': '/home/data/bncong/Desktop/deepml/data/cars196'
+    'Cub': './data/cub_200_2011',
+    'Stanford': './data/stanford',
+    'Car': './data/cars196'
 }
+
 
 def main(args):
     print(args)
@@ -94,11 +95,11 @@ if __name__ == "__main__":
                         help='use pre-trained model')
     parser.add_argument('-c', '--checkpoint', type=str,
                         default='./output/model_best.pth.tar', metavar='PATH')
-    parser.add_argument('-img_size', default=227, type=int,
-                        help='image shape (default: 227)')
-    parser.add_argument('-j', '--workers', default=8, type=int, metavar='N',
+    parser.add_argument('-img_size', default=224, type=int,
+                        help='image shape (default: 224)')
+    parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                         help='number of data loading workers (default: 8)')
-    parser.add_argument('--outdim', default=128, type=int, metavar='N',
+    parser.add_argument('--outdim', default=512, type=int, metavar='N',
                         help='number of features')
     parser.add_argument('-b', '--batch-size', default=256, type=int,
                         metavar='N',

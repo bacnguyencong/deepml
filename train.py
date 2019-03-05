@@ -15,9 +15,9 @@ from deepml.utils import libs, runner
 
 # list of data paths
 DATA_PATHS = {
-    'Cub': '/home/data/bncong/Desktop/deepml/data/cub_200_2011',
-    'Stanford': '/home/data/bncong/Desktop/deepml/data/stanford',
-    'Car': '/home/data/bncong/Desktop/deepml/data/cars196'
+    'Cub': './data/cub_200_2011',
+    'Stanford': './data/stanford',
+    'Car': './data/cars196'
 }
 
 
@@ -139,22 +139,22 @@ if __name__ == "__main__":
                         choices=deepml.MODEL_LOSSES,
                         help='model loss: | '.join(deepml.MODEL_LOSSES) +
                         ' (default: ContrastiveLoss)')
-    parser.add_argument('-img_size', default=227, type=int,
-                        help='image shape (default: 227)')
-    parser.add_argument('-n_targets', default=3, type=int,
-                        help='number of targets (default: 3)')
-    parser.add_argument('-j', '--workers', default=8, type=int, metavar='N',
+    parser.add_argument('-img_size', default=224, type=int,
+                        help='image shape (default: 224)')
+    parser.add_argument('-n_targets', default=5, type=int,
+                        help='number of targets (default: 5)')
+    parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                         help='number of data loading workers (default: 8)')
-    parser.add_argument('--epochs', default=200, type=int, metavar='N',
+    parser.add_argument('--epochs', default=150, type=int, metavar='N',
                         help='number of total epochs to run')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                         help='manual epoch number (useful on restarts)')
-    parser.add_argument('--outdim', default=128, type=int, metavar='N',
+    parser.add_argument('--outdim', default=512, type=int, metavar='N',
                         help='number of features')
     parser.add_argument('-b', '--batch-size', default=256, type=int,
                         metavar='N',
                         help='mini-batch size (default: 256)')
-    parser.add_argument('--lr', '--learning-rate', default=1e-5, type=float,
+    parser.add_argument('--lr', '--learning-rate', default=1e-4, type=float,
                         metavar='LR', help='initial learning rate', dest='lr')
     parser.add_argument('--wd', '--weight-decay', default=1e-4, type=float,
                         metavar='W', help='weight decay (default: 1e-4)',
