@@ -3,12 +3,7 @@ import torch.nn as nn
 
 
 class SymTripLoss(nn.Module):
-    """Implement the symmetric loss
-
-    Args:
-        margin (float, optional): The loss margin. Defaults to 0.5.
-
-    .. bac:
+    """Implementation of the stochastic symmetric loss function.
     """
 
     def __init__(self, **kwargs):
