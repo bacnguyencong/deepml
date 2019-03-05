@@ -1,12 +1,13 @@
 import os
 import shutil
-from tqdm import tqdm
 
 import numpy as np
-import torch
-from torchvision import transforms
 import numpy.matlib as matl
+import torch
 from sklearn.metrics import pairwise_distances
+from sklearn.cluster import KMeans
+from torchvision import transforms
+from tqdm import tqdm
 
 
 class AverageMeter(object):
@@ -53,8 +54,8 @@ def compute_feature(data_loader, model, args):
             target = target.to(args.device)
 
             # compute output
-            features.append(model(input).cpu().numpy())
-            labels.append(target.cpu().numpy().reshape(-1, 1))
+            features.append(model(input).cpu().detach().numpy())
+            labels.append(target.cpu().detach().numpy().reshape(-1, 1))
 
     return np.vstack(features), np.vstack(labels)
 
@@ -89,8 +90,8 @@ def get_data_augmentation(img_size, mean, std, ttype):
     if ttype == 'train':
         return transforms.Compose([
             transforms.Resize((256, 256)),
-            transforms.RandomHorizontalFlip(),
             transforms.RandomCrop((img_size, img_size)),
+            transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             normalize
         ])
@@ -152,3 +153,35 @@ def build_triplets(X, y, n_target=3):
         Triplets = np.hstack(Triplets)
 
     return Triplets
+
+
+def build_batches(X, y, n_target=3, batch_size=128):
+    """Build the batches from training data.
+
+    Args:
+        X ([type]): [description]
+        y ([type]): [description]
+        n_target (int, optional): Defaults to 3. Number of targets.
+        batch_size (int, optional): Defaults to 128.
+
+    Returns:
+        List((indices, triplets)): A list of indices and the corresponding
+            triplet constraints.
+    """
+    assert len(X) == len(y)
+    # compute the clusters using kmeans
+    n_clusters = max(1, X.shape[0] // batch_size)
+    model = KMeans(n_clusters=n_clusters, n_jobs=-1).fit(X)
+
+    # generate all triplet constraints
+    batches = list()
+    for label in np.unique(model.labels_):
+        index = np.where(model.labels_ == label)[0]
+        # if the number of examples is larger than requires
+        if len(index) > batch_size:
+            index = np.random.choice(index, batch_size, replace=False)
+        triplets = build_triplets(X[index], y[index], n_target=n_target)
+        if len(triplets) > 0:
+            batches.append((index, triplets))
+
+    return batches

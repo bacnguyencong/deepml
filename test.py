@@ -13,11 +13,10 @@ from deepml.utils import libs, runner
 
 # list of data paths
 DATA_PATHS = {
-    'Cub': './data/cub_200_2011',
-    'Stanford': './data/stanford',
-    'Car': './data/cars196'
+    'Cub': '/home/data/bncong/Desktop/deepml/data/cub_200_2011',
+    'Stanford': '/home/data/bncong/Desktop/deepml/data/stanford',
+    'Car': '/home/data/bncong/Desktop/deepml/data/cars196'
 }
-
 
 def main(args):
     print(args)

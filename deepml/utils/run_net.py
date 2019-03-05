@@ -1,14 +1,15 @@
 import os
 import time
+
 import numpy as np
 import pandas as pd
+
 from ..evals import nmi_clustering, recall_at_k
 from .early_stopping import EarlyStopping
-from .libs import compute_feature, save_checkpoint, AverageMeter
+from .libs import AverageMeter, compute_feature, save_checkpoint
 
 
 def train(train_loader,
-          val_loader,
           test_loader,
           model, criterion,
           optimizer,
@@ -25,13 +26,13 @@ def train(train_loader,
         optimizer (Optimizer): The optimizer.
         args (Any): The input arguments.
     """
-    losses, acces = list(), list()
+    losses = list()
     best_acc = -np.inf
     topk = ([1, 5])
     tests = list()
 
     # setup early stopping
-    early_stop = EarlyStopping(mode='max', patience=15)
+    early_stop = EarlyStopping(mode='min', patience=15)
 
     for epoch in range(args.start_epoch, args.epochs):
         # Rebuiding mini-batchs
@@ -44,12 +45,15 @@ def train(train_loader,
         loss = run_epoch(train_loader, model, criterion,
                          optimizer, epoch, args)
 
+        is_best = False
         # compute the valiation
-        acc = validate(val_loader, model, args, topk)
-        is_best = acc[0] > best_acc
-
-        # update best accuracy
-        best_acc = max(best_acc, acc[0])
+        if test_loader is not None:
+            t_acc = validate(test_loader, model, args, topk)
+            print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (t_acc[0], t_acc[1]))
+            tests.append(t_acc)
+            is_best = t_acc[0] > best_acc
+            # update best accuracy
+            best_acc = max(best_acc, t_acc[0])
 
         # update the best parameters
         save_checkpoint({
@@ -61,21 +65,14 @@ def train(train_loader,
         }, is_best)
 
         # keep tracking
-        acces.append(acc)
         losses.append(loss)
-        print('Loss=%.4f\tRecall\t@1=%.4f\t@5=%.4f' %
-              (loss, acc[0], acc[1]))
-
-        if test_loader is not None:
-            t_acc = validate(test_loader, model, args, topk)
-            print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (t_acc[0], t_acc[1]))
-            tests.append(t_acc)
+        print('Loss=%.4f' % loss)
 
         # adjust the learning rate
-        scheduler.step(acc[0])
+        scheduler.step(loss)
 
         # early stopping
-        if early_stop.step(acc[0]):
+        if early_stop.step(loss):
             print('Early stopping reached! Stop running...')
             break
 
@@ -85,10 +82,6 @@ def train(train_loader,
         'epoch': range(1, len(losses) + 1),
         'loss': np.array(losses)
     })
-    # write the valid results
-    acces = np.vstack(acces)
-    for i, k in enumerate(topk):
-        tab['train_recall_at_{}'.format(k)] = acces[:, i]
 
     # write the test results
     if test_loader is not None:
@@ -112,14 +105,19 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
         args ([type]): [description]
     """
     losses = AverageMeter()
+    batch_time = AverageMeter()
+
     # switch to train mode
     model.train()
 
     for i, data in enumerate(train_loader):
-        end = time.time()
+
         # place input tensors on the device
         input = data[0].to(args.device)
         target = data[1].to(args.device)
+
+        # start measuring time
+        end = time.time()
 
         # compute output
         output = model(input)
@@ -128,8 +126,9 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
         else:
             loss = criterion(output, target)
 
-        # measure accuracy and record loss
+        # update loss and time
         losses.update(loss.item(), input.size(0))
+        batch_time.update(time.time() - end)
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -138,10 +137,10 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
 
         if i % args.print_freq == 0:
             print('Epoch: [{0}][{1}/{2}]\t'
-                  'time {3}\t'
+                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})'.format(
-                      epoch, i, len(train_loader), time.time() - end,
-                      loss=losses))
+                      epoch, i, len(train_loader),
+                      batch_time=batch_time, loss=losses))
 
     return losses.avg
 

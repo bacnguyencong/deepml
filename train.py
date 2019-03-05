@@ -15,9 +15,9 @@ from deepml.utils import libs, runner
 
 # list of data paths
 DATA_PATHS = {
-    'Cub': './data/cub_200_2011',
-    'Stanford': './data/stanford',
-    'Car': './data/cars196'
+    'Cub': '/home/data/bncong/Desktop/deepml/data/cub_200_2011',
+    'Stanford': '/home/data/bncong/Desktop/deepml/data/stanford',
+    'Car': '/home/data/bncong/Desktop/deepml/data/cars196'
 }
 
 
@@ -78,23 +78,7 @@ def main(args):
         num_workers=args.workers,
         pin_memory=gpu_id >= 0
     )
-    # create valid loader
-    valid_loader = DataLoader(
-        data.get_dataset(
-            ttype='valid',
-            inverted=inverted,
-            transform=libs.get_data_augmentation(
-                img_size=args.img_size,
-                mean=model.base.mean,
-                std=model.base.std,
-                ttype='valid'
-            )
-        ),
-        batch_size=args.batch_size,
-        shuffle=False,
-        num_workers=args.workers,
-        pin_memory=gpu_id >= 0
-    )
+
     # create test loader
     test_loader = DataLoader(
         data.get_dataset(
@@ -124,16 +108,16 @@ def main(args):
         {'params': linear_params, 'lr': args.lr * 10}
     ], lr=args.lr, weight_decay=args.weight_decay)
 
-    # Decay LR by a factor of 0.1 every 10 epochs
+    # Decay LR by a factor of 0.5 every 5 epochs
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, 'max', factor=0.5, patience=5, verbose=True)
+        optimizer, 'min', factor=0.5, patience=5, verbose=True)
 
     # setup device and print frequency
     args.device = device
     args.print_freq = 10
 
     # train the model
-    runner.train(train_loader, valid_loader, test_loader, model,
+    runner.train(train_loader, test_loader, model,
                  criterion, optimizer, scheduler, args)
 
 
