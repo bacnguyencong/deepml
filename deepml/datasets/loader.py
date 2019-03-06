@@ -12,7 +12,7 @@ from ..utils.libs import build_batches
 class DeepMLDataLoader(object):
 
     def __init__(self, dataset, temp_data, batch_size=128, shuffle=False,
-                 n_targets=3, num_workers=8, pin_memory=False):
+                 n_targets=5, num_workers=4, pin_memory=False):
         self.batch_size = batch_size
         self.n_targets = n_targets
         self.dataset = dataset
@@ -25,8 +25,9 @@ class DeepMLDataLoader(object):
             pin_memory=pin_memory
         )
 
-    def generate_batches(self, X, y):
-        self.batches = build_batches(X, y, self.n_targets, self.batch_size)
+    def generate_batches(self, X, y, n_jobs=-1):
+        self.batches = build_batches(
+            X, y, self.n_targets, self.batch_size, n_jobs)
 
     def __iter__(self):
         """Returns a generator containing inputs, targets, triplets."""

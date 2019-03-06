@@ -38,7 +38,7 @@ def train(train_loader,
         # Rebuiding mini-batchs
         X, y = compute_feature(train_loader.standard_loader, model, args)
         end = time.time()
-        train_loader.generate_batches(X, y)
+        train_loader.generate_batches(X, y, n_jobs=args.workers)
         print('Recomputed batches...%.8f' % (time.time() - end))
 
         # run an epoch
