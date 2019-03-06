@@ -3,14 +3,14 @@ source activate deepml-env
 
 export CUDA_VISIBLE_DEVICES=2
 
-DATA='Stanford'
+DATA='Car'
 ARCH='bninception'
 LOSS='SymTripLoss'
 
 LR=0.0001
 DIM=512         # embedded feature size
 IMG_SIZE=224    # image size
-BATCH_SIZE=128  # batch size
+BATCH_SIZE=32  # batch size
 EPOCHS=200      # number of epochs
 CHECK_POINT='./output/model_best.pth.tar'
 PRET='imagenet'
