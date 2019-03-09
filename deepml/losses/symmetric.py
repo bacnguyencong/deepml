@@ -2,12 +2,12 @@ import torch
 import torch.nn as nn
 
 
-class SymTripLoss(nn.Module):
-    """Implementation of the stochastic symmetric loss function.
+class SSTLoss(nn.Module):
+    """Implementation of the stochastic symmetric triplet loss function.
     """
 
     def __init__(self, **kwargs):
-        super(SymTripLoss, self).__init__()
+        super(SSTLoss, self).__init__()
 
     def forward(self, inputs, targets, *args):
         T = args[0]
@@ -28,4 +28,4 @@ class SymTripLoss(nn.Module):
             logs = pos + torch.logsumexp(out, dim=1, keepdim=True)
             loss.append(torch.sum(logs, dim=0, keepdim=True))
 
-        return torch.sum(torch.cat(loss)) / n
+        return sum(loss)/n  # torch.sum(torch.cat(loss)) / n
