@@ -3,7 +3,7 @@ source activate deepml-env
 
 export CUDA_VISIBLE_DEVICES=2
 
-DATA='Car'
+DATA='Stanford'
 ARCH='bninception'
 LOSS='SymTripLoss'
 
