@@ -6,6 +6,10 @@ An implementation of the stochastic symmetric triplet (SST) loss. For any questi
 2.  Install [Miniconda](https://conda.io/miniconda.html).
 3.  Run `conda env create -f environment.yml`.
 4.  Run `source activate deepml-env` to activate the conda environment.
+## Data sets
+1. [CUB200-2011](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
+2. [CARS196](https://ai.stanford.edu/~jkrause/cars/car_dataset.html)
+3. [Stanford Online Products](http://cvgl.stanford.edu/projects/lifted_struct/)
 
 To reproduce the results on the CUB200-2011  data set
 ```
