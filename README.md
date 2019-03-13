@@ -31,6 +31,33 @@ Figure 3: Top-4 retrieval images for random queries on the CUB-200-2011 (top), C
 </em>
 </p>
 
+<center>
+<img src="figures/cub200_TSNE.png"  width="800" align="center" >
+<p>
+<em>
+Figure 4: Barnes-Hut t-SNE [3] visualization on the CUB-200-2011 [4] data set
+</em>
+</p>
+</center>
+
+<center>
+<img src="figures/cars196_TSNE.png"  width="800" align="center" >
+<p>
+<em>
+Figure 5: Barnes-Hut t-SNE [3] visualization on the CARS196 [1] data set
+</em>
+</p>
+</center>
+
+<center>
+<img src="figures/stand_TSNE.png"  width="800" align="center" >
+<em>
+Figure 6: Barnes-Hut t-SNE [3] visualization on the Stanford Online Products [2] data set
+</em>
+</p>
+</center>
+
+
 ## Authors
 
 * [Bac Nguyen Cong](https://github.com/bacnguyencong)
@@ -44,3 +71,9 @@ If you find this code useful in your research, please consider citing:
   Year        = {2019}
 }
 ```
+
+## References
+[1] J. Krause, M. Stark, J. Deng, and L. Fei-Fei. 3D object representations for fine-grained categorization. In ICCVW, 2013.
+[2] H. Oh Song, Y. Xiang, S. Jegelka, and S. Savarese. Deep metric learning via lifted structured feature embedding. In CVPR, pages 4004–4012, 2016.
+[3] L. van der Maaten. Accelerating t-sne using tree-based algorithms. The Journal of Machine Learning Research, 15:3221–3245, 2014.
+[4] P. Welinder, S. Branson, T. Mita, C. Wah, F. Schroff, S. Belongie, and P. Perona. Caltech-ucsd birds 200. Technical Report CNS-TR-2010-001, California Institute of Technology, 2010.
