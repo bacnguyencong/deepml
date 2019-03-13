@@ -7,16 +7,17 @@ Designing more powerful feature representations has motivated the development of
 ## Proposed Method
 <center>
 <img src="figures/idea.png"  width="800" align="center" >
+</center>
 <p>  
 <em> Figure 1: An overview of the proposed method. First, images from a neighborhood are sampled. Then, a convolutional neural network (CNN) is used to map images into the embedded space. A loss function is employed to push similar images close to each other, while keeping dissimilar images far apart. Finally, the similarity relationships are satisfied on all neighborhoods. </em>
 </p>
 
-
-<img src="figures/Triplet.png" width="350"> <img src="figures/SymTriplet.png" width="350">
+<center>
+<img src="figures/Triplet.png" width="700"> <img src="figures/SymTriplet.png" width="700">
 </center>
 <p>
 <em>
-Figure 2: An illustration of the negative gradients induced by (a) the triplet loss and (b) the SST loss
+Figure 2: An illustration of the negative gradients induced by (up) the triplet loss and (down) the SST loss
 </em>
 </p>
 
