@@ -1,4 +1,3 @@
-import os
 import time
 
 import numpy as np
@@ -10,8 +9,8 @@ from .libs import AverageMeter, compute_feature, save_checkpoint
 
 
 def train(train_loader,
-          test_loader,
-          model, criterion,
+          model,
+          criterion,
           optimizer,
           scheduler,
           args):
@@ -19,17 +18,19 @@ def train(train_loader,
 
     Args:
         train_loader (DataLoader): The training data loader.
-        val_loader (DataLoader): The validation data loader.
-        test_loader (DataLoader): The test data loader.
         model (CNNs): The model.
         criterion (Loss): The loss function.
         optimizer (Optimizer): The optimizer.
+        scheduler: Reduce learning rate scheduler.
         args (Any): The input arguments.
+
+    Returns:
+        The trained model.
+        A list containing loss values.
+
     """
     losses = list()
-    best_acc = -np.inf
-    topk = ([1, 5])
-    tests = list()
+    best_loss = np.inf
 
     # setup early stopping
     early_stop = EarlyStopping(mode='min', patience=15)
@@ -44,28 +45,18 @@ def train(train_loader,
         # run an epoch
         loss = run_epoch(train_loader, model, criterion,
                          optimizer, epoch, args)
-
-        is_best = False
-        # compute the valiation
-        if test_loader is not None:
-            t_acc = validate(test_loader, model, args, topk)
-            print('Test\tRecall\t@1=%.4f\t@5=%.4f' % (t_acc[0], t_acc[1]))
-            tests.append(t_acc)
-            is_best = t_acc[0] > best_acc
-            # update best accuracy
-            best_acc = max(best_acc, t_acc[0])
-
         # update the best parameters
         save_checkpoint({
             'epoch': epoch + 1,
             'arch': args.arch,
             'state_dict': model.state_dict(),
-            'best_acc': best_acc,
             'optimizer': optimizer.state_dict(),
-        }, is_best)
+        }, loss < best_loss)
 
         # keep tracking
+        best_loss = min(best_loss, loss)
         losses.append(loss)
+
         print('Loss=%.4f' % loss)
 
         # adjust the learning rate
@@ -76,21 +67,7 @@ def train(train_loader,
             print('Early stopping reached! Stop running...')
             break
 
-    # --------------------------------------------------------------------#
-    # write the output
-    tab = pd.DataFrame({
-        'epoch': range(1, len(losses) + 1),
-        'loss': np.array(losses)
-    })
-
-    # write the test results
-    if test_loader is not None:
-        tests = np.vstack(tests)
-        for i, k in enumerate(topk):
-            tab['test_recall_at_{}'.format(k)] = tests[:, i]
-
-    tab.to_csv(os.path.join('output', 'train_track.csv'), index=False)
-    # --------------------------------------------------------------------#
+    return model, losses
 
 
 def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
@@ -145,48 +122,26 @@ def run_epoch(train_loader, model, criterion, optimizer, epoch, args):
     return losses.avg
 
 
-def validate(val_loader, model, args, topk):
-    """Validate the model.
-
-    Args:
-        val_loader ([type]): [description]
-        model ([type]): [description]
-        args ([type]): [description]
-
-    Returns:
-        [type]: [description]
-    """
-    features, labels = compute_feature(val_loader, model, args)
-    return recall_at_k(features, labels, topk)
-
-
 def test(test_loader, model, args):
-    """Validate the model.
+    """Test the model.
 
     Args:
         test_loader (DataLoader): The data set loader.
         model: The network.
         criterion (Loss): The loss function.
         args: The hyperparameter arguments.
+
+    Returns:
+        The NMI score.
+        The recall@k results.
+
     """
     features, labels = compute_feature(test_loader, model, args)
     topk = np.arange(1, 101, 1)
-
-    # write the features and labels
-    pd.DataFrame(features).to_csv(os.path.join(
-        'output', 'test_features.csv'), header=False, index=False)
-    pd.DataFrame(labels).to_csv(os.path.join(
-        'output', 'test_labels.csv'), header=False, index=False)
-
-    result = recall_at_k(features, labels, topk)
-    print('Recall@k is computed ...')
-    recalls = pd.DataFrame({'k': topk, 'recall': result})
-    # write the recall@k results
-    recalls.to_csv(os.path.join('output', 'test_recall.csv'), index=False)
-
+    # compute the recall
+    results = recall_at_k(features, labels, topk)
+    recalls = pd.DataFrame({'k': topk, 'recall': results})
+    # compute the NMI score
     nmi = nmi_clustering(features, labels)
-    print('NMI is computed ...')
-    # write the clustering results
-    file = open(os.path.join('output', 'test_nmi.txt'), 'w')
-    file.write('%.8f' % nmi)
-    file.close()
+
+    return nmi, recalls

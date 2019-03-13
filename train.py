@@ -4,7 +4,6 @@ import random
 
 import torch
 import torch.backends.cudnn as cudnn
-from torch.utils.data import DataLoader
 
 import deepml
 import pretrainedmodels
@@ -13,6 +12,7 @@ from deepml.datasets.loader import DeepMLDataLoader
 from deepml.models import CNNs
 from deepml.utils import libs, runner
 
+# MODIFY HERE!!!!
 # list of data paths
 DATA_PATHS = {
     'Cub': './data/cub_200_2011',
@@ -79,24 +79,6 @@ def main(args):
         pin_memory=gpu_id >= 0
     )
 
-    # create test loader
-    test_loader = DataLoader(
-        data.get_dataset(
-            ttype='test',
-            inverted=inverted,
-            transform=libs.get_data_augmentation(
-                img_size=args.img_size,
-                mean=model.base.mean,
-                std=model.base.std,
-                ttype='test'
-            )
-        ),
-        batch_size=args.batch_size,
-        shuffle=False,
-        num_workers=args.workers,
-        pin_memory=gpu_id >= 0
-    )
-
     # setup the optimizer
     linear_params = model.base.last_linear.parameters()
     ignored_params = list(map(id, linear_params))
@@ -117,8 +99,7 @@ def main(args):
     args.print_freq = 10
 
     # train the model
-    runner.train(train_loader, test_loader, model,
-                 criterion, optimizer, scheduler, args)
+    runner.train(train_loader, model, criterion, optimizer, scheduler, args)
 
 
 if __name__ == "__main__":
@@ -135,10 +116,10 @@ if __name__ == "__main__":
                         default='imagenet',
                         help='use pre-trained model')
     parser.add_argument('-l', '--loss', metavar='LOSS',
-                        default='ContrastiveLoss',
+                        default='SSTLoss',
                         choices=deepml.MODEL_LOSSES,
                         help='model loss: | '.join(deepml.MODEL_LOSSES) +
-                        ' (default: ContrastiveLoss)')
+                        ' (default: SSTLoss)')
     parser.add_argument('-img_size', default=224, type=int,
                         help='image shape (default: 224)')
     parser.add_argument('-n_targets', default=5, type=int,

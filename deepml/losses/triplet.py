@@ -5,12 +5,11 @@ from ..utils import libs
 
 
 class TripletLoss(nn.Module):
-    """Implement the triplet loss function [bac]_.
+    """Implement the triplet loss function.
 
     Args:
         margin (float, optional): The loss margin. Defaults to 0.5.
 
-    .. bac:
     """
 
     def __init__(self, margin=0.2, n_targets=5, **kwargs):

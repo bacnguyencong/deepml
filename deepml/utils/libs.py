@@ -4,8 +4,8 @@ import shutil
 import numpy as np
 import numpy.matlib as matl
 import torch
-from sklearn.metrics import pairwise_distances
 from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances
 from torchvision import transforms
 from tqdm import tqdm
 

@@ -11,6 +11,7 @@ from deepml import datasets
 from deepml.models import CNNs
 from deepml.utils import libs, runner
 
+# MODIFY HERE!!!!
 # list of data paths
 DATA_PATHS = {
     'Cub': './data/cub_200_2011',
