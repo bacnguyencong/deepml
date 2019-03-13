@@ -74,6 +74,9 @@ If you find this code useful in your research, please consider citing:
 
 ## References
 [1] J. Krause, M. Stark, J. Deng, and L. Fei-Fei. 3D object representations for fine-grained categorization. In ICCVW, 2013.
+
 [2] H. Oh Song, Y. Xiang, S. Jegelka, and S. Savarese. Deep metric learning via lifted structured feature embedding. In CVPR, pages 4004–4012, 2016.
+
 [3] L. van der Maaten. Accelerating t-sne using tree-based algorithms. The Journal of Machine Learning Research, 15:3221–3245, 2014.
+
 [4] P. Welinder, S. Branson, T. Mita, C. Wah, F. Schroff, S. Belongie, and P. Perona. Caltech-ucsd birds 200. Technical Report CNS-TR-2010-001, California Institute of Technology, 2010.
