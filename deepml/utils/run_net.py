@@ -1,3 +1,4 @@
+import os
 import time
 
 import numpy as np
@@ -138,10 +139,24 @@ def test(test_loader, model, args):
     """
     features, labels = compute_feature(test_loader, model, args)
     topk = np.arange(1, 101, 1)
-    # compute the recall
+
+    # write the features and labels
+    pd.DataFrame(features).to_csv(os.path.join(
+        'output', 'test_features.csv'), header=False, index=False)
+    pd.DataFrame(labels).to_csv(os.path.join(
+        'output', 'test_labels.csv'), header=False, index=False)
+
     results = recall_at_k(features, labels, topk)
+    print('Recall@k is computed ...')
     recalls = pd.DataFrame({'k': topk, 'recall': results})
-    # compute the NMI score
+    # write the recall@k results
+    recalls.to_csv(os.path.join('output', 'test_recall.csv'), index=False)
+
     nmi = nmi_clustering(features, labels)
+    print('NMI is computed ...')
+    # write the clustering results
+    file = open(os.path.join('output', 'test_nmi.txt'), 'w')
+    file.write('%.8f' % nmi)
+    file.close()
 
     return nmi, recalls
