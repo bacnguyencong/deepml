@@ -8,22 +8,38 @@ Designing more powerful feature representations has motivated the development of
 <center>
 <img src="figures/idea.png"  width="800" align="center" >
 <p>  
-<em> An overview of the proposed method. First, images from a neighborhood are sampled. Then, a convolutional neural network (CNN) is used to map images into the embedded space. A loss function is employed to push similar images close to each other, while keeping dissimilar images far apart. Finally, the similarity relationships are satisfied on all neighborhoods. </em>
+<em> Figure 1: An overview of the proposed method. First, images from a neighborhood are sampled. Then, a convolutional neural network (CNN) is used to map images into the embedded space. A loss function is employed to push similar images close to each other, while keeping dissimilar images far apart. Finally, the similarity relationships are satisfied on all neighborhoods. </em>
 </p>
+
+
+<img src="figures/Triplet.png" width="350"> <img src="figures/SymTriplet.png" width="350">
 </center>
-<img src="figures/Triplet.png" width="400"> <img src="figures/SymTriplet.png" width="400">
 <p>
 <em>
-An illustration of the negative gradients induced by (a) the triplet loss and (b) the SST loss
+Figure 2: An illustration of the negative gradients induced by (a) the triplet loss and (b) the SST loss
 </em>
 </p>
 
 ## Results
-<img src="figures/cub200_example.png"  width="300">
-<img src="figures/cars196_example.png"  width="300">
-<img src="figures/stanford_example.png"  width="300">
+<img src="figures/cub200_example.png"  width="400">
+<img src="figures/cars196_example.png"  width="400">
+<img src="figures/stanford_example.png"  width="400">
 <p>
 <em>
-Top-4 retrieval images for random queries on the CUB-200-2011 (top), CARS169 (middle), and Stanford Online Products (bottom) data sets. Correct matches are marked with green color and incorrect matches are marked with red color.
+Figure 3: Top-4 retrieval images for random queries on the CUB-200-2011 (top), CARS169 (middle), and Stanford Online Products (bottom) data sets. Correct matches are marked with green color and incorrect matches are marked with red color.
 </em>
 </p>
+
+## Authors
+
+* [Bac Nguyen Cong](https://github.com/bacnguyencong)
+
+## Acknowledgments
+If you find this code useful in your research, please consider citing:
+``` bibtex
+@inproceedings{Nguyen2019a,
+  Title       = {Improving Deep Metric Learning with Local Sampling},
+  Author      = {Bac Nguyen and De Baets, Bernard},
+  Year        = {2019}
+}
+```
