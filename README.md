@@ -15,6 +15,12 @@ To reproduce the results on the CUB200-2011  data set
 ```
 bash job.sh
 ```
+## Trained models
+
+Here is the link of the trained models (Drop Box):
+1. [CUB200-2011](https://www.dropbox.com/s/jn3jadszy8wi2f0/Cub200.pth.tar?dl=0)
+2. [CARS196](https://www.dropbox.com/s/abb5sijlvubpxrd/Cars196.pth.tar?dl=0)
+3. [Stanford Online Products](https://www.dropbox.com/s/mijivxkwfm12v0i/Stanford.pth.tar?dl=0)
 
 ## Abstract
 Designing more powerful feature representations has motivated the development of deep metric learning algorithms over the last few years. The idea is to transform data into a representation space where some prior similarity relationships of examples are preserved, e.g., distances between similar examples are smaller than those between dissimilar examples. While such algorithms have produced some impressive results, they often suffer from difficulties in training. In this paper, we propose a simple sampling strategy, which focuses on maintaining locally the similarity relationships of examples in their neighborhoods. This technique aims to reduce the local overlap between different classes in different parts of the embedded space. Additionally, we introduce an improved triplet-based loss for deep metric learning. Experimental results on three standard benchmark data sets confirm that our method provides more accurate and faster training than other state-of-the-art methods.
