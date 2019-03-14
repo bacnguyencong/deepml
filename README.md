@@ -21,14 +21,14 @@ Designing more powerful feature representations has motivated the development of
 
 ## Proposed Method
 <center>
-<img src="figures/idea.png"  width="800" align="center" >
+<img src="output/figures/idea.png"  width="800" align="center" >
 </center>
 <p>  
 <em> Figure 1: An overview of the proposed method. First, images from a neighborhood are sampled. Then, a convolutional neural network (CNN) is used to map images into the embedded space. A loss function is employed to push similar images close to each other, while keeping dissimilar images far apart. Finally, the similarity relationships are satisfied on all neighborhoods. </em>
 </p>
 
 <center>
-<img src="figures/Triplet.png" width="700"> <img src="figures/SymTriplet.png" width="700">
+<img src="output/figures/Triplet.png" width="700"> <img src="output/figures/SymTriplet.png" width="700">
 </center>
 <p>
 <em>
@@ -37,9 +37,9 @@ Figure 2: An illustration of the negative gradients induced by (up) the triplet 
 </p>
 
 ## Results
-<img src="figures/cub200_example.png"  width="400">
-<img src="figures/cars196_example.png"  width="400">
-<img src="figures/stanford_example.png"  width="400">
+<img src="output/figures/cub200_example.png"  width="400">
+<img src="output/figures/cars196_example.png"  width="400">
+<img src="output/figures/stanford_example.png"  width="400">
 <p>
 <em>
 Figure 3: Top-4 retrieval images for random queries on the CUB-200-2011 (top), CARS169 (middle), and Stanford Online Products (bottom) data sets. Correct matches are marked with green color and incorrect matches are marked with red color.
@@ -47,7 +47,7 @@ Figure 3: Top-4 retrieval images for random queries on the CUB-200-2011 (top), C
 </p>
 
 <center>
-<img src="figures/cub200_TSNE.png"  width="800" align="center" >
+<img src="output/figures/cub200_TSNE.png"  width="800" align="center" >
 <p>
 <em>
 Figure 4: Barnes-Hut t-SNE [3] visualization on the CUB-200-2011 [4] data set
@@ -56,7 +56,7 @@ Figure 4: Barnes-Hut t-SNE [3] visualization on the CUB-200-2011 [4] data set
 </center>
 
 <center>
-<img src="figures/cars196_TSNE.png"  width="800" align="center" >
+<img src="output/figures/cars196_TSNE.png"  width="800" align="center" >
 <p>
 <em>
 Figure 5: Barnes-Hut t-SNE [3] visualization on the CARS196 [1] data set
@@ -65,7 +65,7 @@ Figure 5: Barnes-Hut t-SNE [3] visualization on the CARS196 [1] data set
 </center>
 
 <center>
-<img src="figures/stand_TSNE.png"  width="800" align="center" >
+<img src="output/figures/stand_TSNE.png"  width="800" align="center" >
 <em>
 Figure 6: Barnes-Hut t-SNE [3] visualization on the Stanford Online Products [2] data set
 </em>

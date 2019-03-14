@@ -1,7 +1,9 @@
 .pytest_cache/
 .vscode/
 data/
-output/
+output/notebook/
+output/results/
+output/tmp/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
