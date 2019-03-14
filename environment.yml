@@ -22,3 +22,8 @@ dependencies:
  - sphinx
  - pytorch
  - torchvision
+ - tqdm
+ - seaborn
+ - matplotlib
+ - pip:
+    - pretrainedmodels
