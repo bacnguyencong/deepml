@@ -2,6 +2,8 @@ name: deepml-env
 channels:
  - defaults
  - conda-forge
+ - ioam
+ - soumith
 dependencies:
  - autopep8
  - distributed
@@ -27,3 +29,4 @@ dependencies:
  - matplotlib
  - pip:
     - pretrainedmodels
+    - pillow
