@@ -5,7 +5,7 @@ export CUDA_VISIBLE_DEVICES=2
 
 DATA='Cub'
 ARCH='bninception'
-LOSS= 'TripletLoss' #'SSTLoss'
+LOSS='TripletLoss' #'SSTLoss'
 
 LR=0.0001
 DIM=512         # embedded feature size
