@@ -87,7 +87,7 @@ Figure 6: Barnes-Hut t-SNE [3] visualization on the Stanford Online Products [2]
 If you find this code useful in your research, please consider citing:
 ``` bibtex
 @article{Nguyen2019a,
-  Title       = {Improving Deep Metric Learning with Local Sampling},
+  Title       = {Improved deep embedding learning based on stochastic symmetric triplet loss and local sampling},
   Author      = {Bac Nguyen and De Baets, Bernard},
   Year        = {2020},
   Journal     = {Neurocomputing}
