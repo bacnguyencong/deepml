@@ -1,4 +1,4 @@
-# Improving Deep Metric Learning with Local Sampling
+# Improved deep embedding learning based on stochastic symmetric triplet loss and local sampling
 An implementation of the stochastic symmetric triplet (SST) loss. For any question, please contact Bac Nguyen (nguyencongbacbk@gmail.com).
 
 ## Installation
@@ -86,10 +86,11 @@ Figure 6: Barnes-Hut t-SNE [3] visualization on the Stanford Online Products [2]
 ## Acknowledgments
 If you find this code useful in your research, please consider citing:
 ``` bibtex
-@inproceedings{Nguyen2019a,
+@article{Nguyen2019a,
   Title       = {Improving Deep Metric Learning with Local Sampling},
   Author      = {Bac Nguyen and De Baets, Bernard},
-  Year        = {2019}
+  Year        = {2020},
+  Journal     = {Neurocomputing}
 }
 ```
 
